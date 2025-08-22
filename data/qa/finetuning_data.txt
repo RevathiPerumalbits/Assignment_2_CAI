@@ -1,0 +1,374 @@
+Question: What was the assets current assets cash and cash equivalents in 2023?
+Answer: For the year 2023, the assets current assets cash and cash equivalents was $1,481 million.
+Question: What was the assets current assets cash and cash equivalents in 2022?
+Answer: For the year 2022, the assets current assets cash and cash equivalents was $2,305 million.
+Question: What was the current investments trade receivables in 2023?
+Answer: For the year 2023, the current investments trade receivables was $3,094 million.
+Question: What was the current investments trade receivables in 2022?
+Answer: For the year 2022, the current investments trade receivables was $2,995 million.
+Question: What was the unbilled revenues in 2023?
+Answer: For the year 2023, the unbilled revenues was $1,861 million.
+Question: What was the unbilled revenues in 2022?
+Answer: For the year 2022, the unbilled revenues was $1,526 million.
+Question: What was the prepayments and other current assets in 2023?
+Answer: For the year 2023, the prepayments and other current assets was $1,336 million.
+Question: What was the prepayments and other current assets in 2022?
+Answer: For the year 2022, the prepayments and other current assets was $1,133 million.
+Question: What was the income tax assets derivative financial instruments total current assets in 2023?
+Answer: For the year 2023, the income tax assets derivative financial instruments total current assets was $8,626 million.
+Question: What was the income tax assets derivative financial instruments total current assets in 2022?
+Answer: For the year 2022, the income tax assets derivative financial instruments total current assets was $8,865 million.
+Question: What was the non-current assets property, plant and equipment in 2023?
+Answer: For the year 2023, the non-current assets property, plant and equipment was $1,679 million.
+Question: What was the non-current assets property, plant and equipment in 2022?
+Answer: For the year 2022, the non-current assets property, plant and equipment was $1,793 million.
+Question: What was the right-of-use assets goodwill intangible assets non-current investments in 2023?
+Answer: For the year 2023, the right-of-use assets goodwill intangible assets non-current investments was $1,530 million.
+Question: What was the right-of-use assets goodwill intangible assets non-current investments in 2022?
+Answer: For the year 2022, the right-of-use assets goodwill intangible assets non-current investments was $1,801 million.
+Question: What was the unbilled revenues deferred income tax assets income tax assets other non-current assets total non-current assets in 2023?
+Answer: For the year 2023, the unbilled revenues deferred income tax assets income tax assets other non-current assets total non-current assets was $6,686 million.
+Question: What was the unbilled revenues deferred income tax assets income tax assets other non-current assets total non-current assets in 2022?
+Answer: For the year 2022, the unbilled revenues deferred income tax assets income tax assets other non-current assets total non-current assets was $6,690 million.
+Question: What was the total assets in 2023?
+Answer: For the year 2023, the total assets was $15,312 million.
+Question: What was the total assets in 2022?
+Answer: For the year 2022, the total assets was $15,555 million.
+Question: What was the liabilities and equity current liabilities trade payables lease liabilities derivative financial instruments current income tax liabilities unearned revenues employee benefit obligations provisions other current liabilities in 2023?
+Answer: For the year 2023, the liabilities and equity current liabilities trade payables lease liabilities derivative financial instruments current income tax liabilities unearned revenues employee benefit obligations provisions other current liabilities was $2,403 million.
+Question: What was the liabilities and equity current liabilities trade payables lease liabilities derivative financial instruments current income tax liabilities unearned revenues employee benefit obligations provisions other current liabilities in 2022?
+Answer: For the year 2022, the liabilities and equity current liabilities trade payables lease liabilities derivative financial instruments current income tax liabilities unearned revenues employee benefit obligations provisions other current liabilities was $2,170 million.
+Question: What was the total current liabilities in 2023?
+Answer: For the year 2023, the total current liabilities was $4,769 million.
+Question: What was the total current liabilities in 2022?
+Answer: For the year 2022, the total current liabilities was $4,433 million.
+Question: What was the non-current liabilities lease liabilities deferred income tax liabilities employee benefit obligations other non-current liabilities total liabilities in 2023?
+Answer: For the year 2023, the non-current liabilities lease liabilities deferred income tax liabilities employee benefit obligations other non-current liabilities total liabilities was $6,088 million.
+Question: What was the non-current liabilities lease liabilities deferred income tax liabilities employee benefit obligations other non-current liabilities total liabilities in 2022?
+Answer: For the year 2022, the non-current liabilities lease liabilities deferred income tax liabilities employee benefit obligations other non-current liabilities total liabilities was $5,561 million.
+Question: What was the equity share capital – ₹5/- ($0.16) par value in 2023?
+Answer: For the year 2023, the equity share capital – ₹5/- ($0.16) par value was $4,800,000,000 million.
+Question: What was the equity share capital – ₹5/- ($0.16) par value in 2022?
+Answer: For the year 2022, the equity share capital – ₹5/- ($0.16) par value was $(4,800,000,000) million.
+Question: What was the authorized equity shares, issued and outstanding in 2023?
+Answer: For the year 2023, the authorized equity shares, issued and outstanding was $4,136,387,925 million.
+Question: What was the authorized equity shares, issued and outstanding in 2022?
+Answer: For the year 2022, the authorized equity shares, issued and outstanding was $(4,193,012,929) million.
+Question: What was the equity shares fully paid up, net of in 2023?
+Answer: For the year 2023, the equity shares fully paid up, net of was $12,172,119 million.
+Question: What was the equity shares fully paid up, net of in 2022?
+Answer: For the year 2022, the equity shares fully paid up, net of was $(13,725,712) million.
+Question: What was the treasury shares each as of march in 2023?
+Answer: For the year 2023, the treasury shares each as of march was $31, million.
+Question: What was the treasury shares each as of march in 2022?
+Answer: For the year 2022, the treasury shares each as of march was $2023 million.
+Question: What was the (march in 2023?
+Answer: For the year 2023, the (march was $31, million.
+Question: What was the (march in 2022?
+Answer: For the year 2022, the (march was $2022 million.
+Question: What was the ), respectively share premium retained earnings in 2023?
+Answer: For the year 2023, the ), respectively share premium retained earnings was $11,401 million.
+Question: What was the ), respectively share premium retained earnings in 2022?
+Answer: For the year 2022, the ), respectively share premium retained earnings was $11,672 million.
+Question: What was the cash flow hedge reserve – other reserves in 2023?
+Answer: For the year 2023, the cash flow hedge reserve – other reserves was $1,370 million.
+Question: What was the cash flow hedge reserve – other reserves in 2022?
+Answer: For the year 2022, the cash flow hedge reserve – other reserves was $1,170 million.
+Question: What was the capital redemption reserve other components of equity in 2023?
+Answer: For the year 2023, the capital redemption reserve other components of equity was $(4,314) million.
+Question: What was the capital redemption reserve other components of equity in 2022?
+Answer: For the year 2022, the capital redemption reserve other components of equity was $(3,588) million.
+Question: What was the total equity attributable to equity holders of the company in 2023?
+Answer: For the year 2023, the total equity attributable to equity holders of the company was $9,172 million.
+Question: What was the total equity attributable to equity holders of the company in 2022?
+Answer: For the year 2022, the total equity attributable to equity holders of the company was $9,941 million.
+Question: What was the non-controlling interests total equity in 2023?
+Answer: For the year 2023, the non-controlling interests total equity was $9,224 million.
+Question: What was the non-controlling interests total equity in 2022?
+Answer: For the year 2022, the non-controlling interests total equity was $9,994 million.
+Question: What was the assets current assets cash and cash equivalents in 2024?
+Answer: For the year 2024, the assets current assets cash and cash equivalents was $1,773 million.
+Question: What was the assets current assets cash and cash equivalents in 2023?
+Answer: For the year 2023, the assets current assets cash and cash equivalents was $1,481 million.
+Question: What was the current investments 1,548 trade receivables in 2024?
+Answer: For the year 2024, the current investments 1,548 trade receivables was $3,620 million.
+Question: What was the current investments 1,548 trade receivables in 2023?
+Answer: For the year 2023, the current investments 1,548 trade receivables was $3,094 million.
+Question: What was the unbilled revenues in 2024?
+Answer: For the year 2024, the unbilled revenues was $1,531 million.
+Question: What was the unbilled revenues in 2023?
+Answer: For the year 2023, the unbilled revenues was $1,861 million.
+Question: What was the prepayments and other current assets in 2024?
+Answer: For the year 2024, the prepayments and other current assets was $1,473 million.
+Question: What was the prepayments and other current assets in 2023?
+Answer: For the year 2023, the prepayments and other current assets was $1,336 million.
+Question: What was the income tax assets derivative financial instruments total current assets in 2024?
+Answer: For the year 2024, the income tax assets derivative financial instruments total current assets was $10,722 million.
+Question: What was the income tax assets derivative financial instruments total current assets in 2023?
+Answer: For the year 2023, the income tax assets derivative financial instruments total current assets was $8,626 million.
+Question: What was the non-current assets property, plant and equipment in 2024?
+Answer: For the year 2024, the non-current assets property, plant and equipment was $1,537 million.
+Question: What was the non-current assets property, plant and equipment in 2023?
+Answer: For the year 2023, the non-current assets property, plant and equipment was $1,679 million.
+Question: What was the right-of-use assets goodwill intangible assets non-current investments in 2024?
+Answer: For the year 2024, the right-of-use assets goodwill intangible assets non-current investments was $1,404 million.
+Question: What was the right-of-use assets goodwill intangible assets non-current investments in 2023?
+Answer: For the year 2023, the right-of-use assets goodwill intangible assets non-current investments was $1,530 million.
+Question: What was the unbilled revenues deferred income tax assets income tax assets other non-current assets total non-current assets in 2024?
+Answer: For the year 2024, the unbilled revenues deferred income tax assets income tax assets other non-current assets total non-current assets was $5,801 million.
+Question: What was the unbilled revenues deferred income tax assets income tax assets other non-current assets total non-current assets in 2023?
+Answer: For the year 2023, the unbilled revenues deferred income tax assets income tax assets other non-current assets total non-current assets was $6,686 million.
+Question: What was the total assets in 2024?
+Answer: For the year 2024, the total assets was $16,523 million.
+Question: What was the total assets in 2023?
+Answer: For the year 2023, the total assets was $15,312 million.
+Question: What was the liabilities and equity current liabilities trade payables lease liabilities derivative financial instruments current income tax liabilities unearned revenues employee benefit obligations provisions other current liabilities in 2024?
+Answer: For the year 2024, the liabilities and equity current liabilities trade payables lease liabilities derivative financial instruments current income tax liabilities unearned revenues employee benefit obligations provisions other current liabilities was $2,099 million.
+Question: What was the liabilities and equity current liabilities trade payables lease liabilities derivative financial instruments current income tax liabilities unearned revenues employee benefit obligations provisions other current liabilities in 2023?
+Answer: For the year 2023, the liabilities and equity current liabilities trade payables lease liabilities derivative financial instruments current income tax liabilities unearned revenues employee benefit obligations provisions other current liabilities was $2,403 million.
+Question: What was the total current liabilities in 2024?
+Answer: For the year 2024, the total current liabilities was $4,651 million.
+Question: What was the total current liabilities in 2023?
+Answer: For the year 2023, the total current liabilities was $4,769 million.
+Question: What was the non-current liabilities lease liabilities deferred income tax liabilities employee benefit obligations other non-current liabilities total liabilities in 2024?
+Answer: For the year 2024, the non-current liabilities lease liabilities deferred income tax liabilities employee benefit obligations other non-current liabilities total liabilities was $5,918 million.
+Question: What was the non-current liabilities lease liabilities deferred income tax liabilities employee benefit obligations other non-current liabilities total liabilities in 2023?
+Answer: For the year 2023, the non-current liabilities lease liabilities deferred income tax liabilities employee benefit obligations other non-current liabilities total liabilities was $6,088 million.
+Question: What was the equity share capital – ₹5/- ($0.16) par value in 2024?
+Answer: For the year 2024, the equity share capital – ₹5/- ($0.16) par value was $4,800,000,000 million.
+Question: What was the equity share capital – ₹5/- ($0.16) par value in 2023?
+Answer: For the year 2023, the equity share capital – ₹5/- ($0.16) par value was $(4,800,000,000) million.
+Question: What was the authorized equity shares, issued and outstanding in 2024?
+Answer: For the year 2024, the authorized equity shares, issued and outstanding was $4,139,950,635 million.
+Question: What was the authorized equity shares, issued and outstanding in 2023?
+Answer: For the year 2023, the authorized equity shares, issued and outstanding was $(4,136,387,925) million.
+Question: What was the equity shares fully paid up, net of in 2024?
+Answer: For the year 2024, the equity shares fully paid up, net of was $10,916,829 million.
+Question: What was the equity shares fully paid up, net of in 2023?
+Answer: For the year 2023, the equity shares fully paid up, net of was $(12,172,119) million.
+Question: What was the treasury shares each as of march in 2024?
+Answer: For the year 2024, the treasury shares each as of march was $31, million.
+Question: What was the treasury shares each as of march in 2023?
+Answer: For the year 2023, the treasury shares each as of march was $2024 million.
+Question: What was the (march in 2024?
+Answer: For the year 2024, the (march was $31, million.
+Question: What was the (march in 2023?
+Answer: For the year 2023, the (march was $2023 million.
+Question: What was the ), respectively share premium retained earnings in 2024?
+Answer: For the year 2024, the ), respectively share premium retained earnings was $12,557 million.
+Question: What was the ), respectively share premium retained earnings in 2023?
+Answer: For the year 2023, the ), respectively share premium retained earnings was $11,401 million.
+Question: What was the cash flow hedge reserve – other reserves in 2024?
+Answer: For the year 2024, the cash flow hedge reserve – other reserves was $1,623 million.
+Question: What was the cash flow hedge reserve – other reserves in 2023?
+Answer: For the year 2023, the cash flow hedge reserve – other reserves was $1,370 million.
+Question: What was the capital redemption reserve other components of equity in 2024?
+Answer: For the year 2024, the capital redemption reserve other components of equity was $(4,396) million.
+Question: What was the capital redemption reserve other components of equity in 2023?
+Answer: For the year 2023, the capital redemption reserve other components of equity was $(4,314) million.
+Question: What was the total equity attributable to equity holders of the company in 2024?
+Answer: For the year 2024, the total equity attributable to equity holders of the company was $10,559 million.
+Question: What was the total equity attributable to equity holders of the company in 2023?
+Answer: For the year 2023, the total equity attributable to equity holders of the company was $9,172 million.
+Question: What was the non-controlling interests total equity in 2024?
+Answer: For the year 2024, the non-controlling interests total equity was $10,605 million.
+Question: What was the non-controlling interests total equity in 2023?
+Answer: For the year 2023, the non-controlling interests total equity was $9,224 million.
+Question: What was the revenues in 2023?
+Answer: For the year 2023, the revenues was $18,212 million.
+Question: What was the revenues in 2022?
+Answer: For the year 2022, the revenues was $16,311 million.
+Question: What was the revenues in 2021?
+Answer: For the year 2021, the revenues was $13,561 million.
+Question: What was the cost of sales in 2023?
+Answer: For the year 2023, the cost of sales was $12,709 million.
+Question: What was the cost of sales in 2022?
+Answer: For the year 2022, the cost of sales was $10,996 million.
+Question: What was the cost of sales in 2021?
+Answer: For the year 2021, the cost of sales was $8,828 million.
+Question: What was the gross profit in 2023?
+Answer: For the year 2023, the gross profit was $5,503 million.
+Question: What was the gross profit in 2022?
+Answer: For the year 2022, the gross profit was $5,315 million.
+Question: What was the gross profit in 2021?
+Answer: For the year 2021, the gross profit was $4,733 million.
+Question: What was the operating expenses: selling and marketing expenses administrative expenses total operating expenses in 2023?
+Answer: For the year 2023, the operating expenses: selling and marketing expenses administrative expenses total operating expenses was $1,678 million.
+Question: What was the operating expenses: selling and marketing expenses administrative expenses total operating expenses in 2022?
+Answer: For the year 2022, the operating expenses: selling and marketing expenses administrative expenses total operating expenses was $1,560 million.
+Question: What was the operating expenses: selling and marketing expenses administrative expenses total operating expenses in 2021?
+Answer: For the year 2021, the operating expenses: selling and marketing expenses administrative expenses total operating expenses was $1,408 million.
+Question: What was the operating profit in 2023?
+Answer: For the year 2023, the operating profit was $3,825 million.
+Question: What was the operating profit in 2022?
+Answer: For the year 2022, the operating profit was $3,755 million.
+Question: What was the operating profit in 2021?
+Answer: For the year 2021, the operating profit was $3,325 million.
+Question: What was the other income, net finance cost profit before income taxes in 2023?
+Answer: For the year 2023, the other income, net finance cost profit before income taxes was $4,125 million.
+Question: What was the other income, net finance cost profit before income taxes in 2022?
+Answer: For the year 2022, the other income, net finance cost profit before income taxes was $4,036 million.
+Question: What was the other income, net finance cost profit before income taxes in 2021?
+Answer: For the year 2021, the other income, net finance cost profit before income taxes was $3,596 million.
+Question: What was the income tax expense in 2023?
+Answer: For the year 2023, the income tax expense was $1,142 million.
+Question: What was the income tax expense in 2022?
+Answer: For the year 2022, the income tax expense was $1,068 million.
+Question: What was the net profit in 2023?
+Answer: For the year 2023, the net profit was $2,983 million.
+Question: What was the net profit in 2022?
+Answer: For the year 2022, the net profit was $2,968 million.
+Question: What was the net profit in 2021?
+Answer: For the year 2021, the net profit was $2,623 million.
+Question: What was the other comprehensive income items that will not be reclassified subsequently to profit or loss: remeasurements of the net defined benefit liability / asset, net (11) equity instruments through other comprehensive income, net and (3) items that will be reclassified subsequently to profit or loss: fair valuation of investments, net and in 2023?
+Answer: For the year 2023, the other comprehensive income items that will not be reclassified subsequently to profit or loss: remeasurements of the net defined benefit liability / asset, net (11) equity instruments through other comprehensive income, net and (3) items that will be reclassified subsequently to profit or loss: fair valuation of investments, net and was $(30) million.
+Question: What was the other comprehensive income items that will not be reclassified subsequently to profit or loss: remeasurements of the net defined benefit liability / asset, net (11) equity instruments through other comprehensive income, net and (3) items that will be reclassified subsequently to profit or loss: fair valuation of investments, net and in 2022?
+Answer: For the year 2022, the other comprehensive income items that will not be reclassified subsequently to profit or loss: remeasurements of the net defined benefit liability / asset, net (11) equity instruments through other comprehensive income, net and (3) items that will be reclassified subsequently to profit or loss: fair valuation of investments, net and was $(6) million.
+Question: What was the other comprehensive income items that will not be reclassified subsequently to profit or loss: remeasurements of the net defined benefit liability / asset, net (11) equity instruments through other comprehensive income, net and (3) items that will be reclassified subsequently to profit or loss: fair valuation of investments, net and in 2021?
+Answer: For the year 2021, the other comprehensive income items that will not be reclassified subsequently to profit or loss: remeasurements of the net defined benefit liability / asset, net (11) equity instruments through other comprehensive income, net and (3) items that will be reclassified subsequently to profit or loss: fair valuation of investments, net and was $(14) million.
+Question: What was the fair value changes on derivatives designated as cash flow hedge, net and in 2023?
+Answer: For the year 2023, the fair value changes on derivatives designated as cash flow hedge, net and was $(1) million.
+Question: What was the fair value changes on derivatives designated as cash flow hedge, net and in 2022?
+Answer: For the year 2022, the fair value changes on derivatives designated as cash flow hedge, net and was $(1) million.
+Question: What was the exchange differences on translation of foreign operations in 2023?
+Answer: For the year 2023, the exchange differences on translation of foreign operations was $(697) million.
+Question: What was the exchange differences on translation of foreign operations in 2022?
+Answer: For the year 2022, the exchange differences on translation of foreign operations was $(320) million.
+Question: What was the exchange differences on translation of foreign operations in 2021?
+Answer: For the year 2021, the exchange differences on translation of foreign operations was $(728) million.
+Question: What was the (327) total other comprehensive income/(loss), net of tax in 2023?
+Answer: For the year 2023, the (327) total other comprehensive income/(loss), net of tax was $(727) million.
+Question: What was the (327) total other comprehensive income/(loss), net of tax in 2022?
+Answer: For the year 2022, the (327) total other comprehensive income/(loss), net of tax was $(326) million.
+Question: What was the total comprehensive income in 2023?
+Answer: For the year 2023, the total comprehensive income was $2,256 million.
+Question: What was the total comprehensive income in 2022?
+Answer: For the year 2022, the total comprehensive income was $2,642 million.
+Question: What was the total comprehensive income in 2021?
+Answer: For the year 2021, the total comprehensive income was $2,979 million.
+Question: What was the profit attributable to: owners of the company in 2023?
+Answer: For the year 2023, the profit attributable to: owners of the company was $2,981 million.
+Question: What was the profit attributable to: owners of the company in 2022?
+Answer: For the year 2022, the profit attributable to: owners of the company was $2,963 million.
+Question: What was the profit attributable to: owners of the company in 2021?
+Answer: For the year 2021, the profit attributable to: owners of the company was $2,613 million.
+Question: What was the non-controlling interests in 2023?
+Answer: For the year 2023, the non-controlling interests was $2,983 million.
+Question: What was the non-controlling interests in 2022?
+Answer: For the year 2022, the non-controlling interests was $2,968 million.
+Question: What was the non-controlling interests in 2021?
+Answer: For the year 2021, the non-controlling interests was $2,623 million.
+Question: What was the total comprehensive income attributable to: owners of the company in 2023?
+Answer: For the year 2023, the total comprehensive income attributable to: owners of the company was $2,254 million.
+Question: What was the total comprehensive income attributable to: owners of the company in 2022?
+Answer: For the year 2022, the total comprehensive income attributable to: owners of the company was $2,637 million.
+Question: What was the total comprehensive income attributable to: owners of the company in 2021?
+Answer: For the year 2021, the total comprehensive income attributable to: owners of the company was $2,968 million.
+Question: What was the non-controlling interests in 2023?
+Answer: For the year 2023, the non-controlling interests was $2,256 million.
+Question: What was the non-controlling interests in 2022?
+Answer: For the year 2022, the non-controlling interests was $2,642 million.
+Question: What was the non-controlling interests in 2021?
+Answer: For the year 2021, the non-controlling interests was $2,979 million.
+Question: What was the revenues in 2024?
+Answer: For the year 2024, the revenues was $18,562 million.
+Question: What was the revenues in 2023?
+Answer: For the year 2023, the revenues was $18,212 million.
+Question: What was the revenues in 2022?
+Answer: For the year 2022, the revenues was $16,311 million.
+Question: What was the cost of sales in 2024?
+Answer: For the year 2024, the cost of sales was $12,975 million.
+Question: What was the cost of sales in 2023?
+Answer: For the year 2023, the cost of sales was $12,709 million.
+Question: What was the cost of sales in 2022?
+Answer: For the year 2022, the cost of sales was $10,996 million.
+Question: What was the gross profit in 2024?
+Answer: For the year 2024, the gross profit was $5,587 million.
+Question: What was the gross profit in 2023?
+Answer: For the year 2023, the gross profit was $5,503 million.
+Question: What was the gross profit in 2022?
+Answer: For the year 2022, the gross profit was $5,315 million.
+Question: What was the operating expenses: selling and marketing expenses administrative expenses total operating expenses in 2024?
+Answer: For the year 2024, the operating expenses: selling and marketing expenses administrative expenses total operating expenses was $1,753 million.
+Question: What was the operating expenses: selling and marketing expenses administrative expenses total operating expenses in 2023?
+Answer: For the year 2023, the operating expenses: selling and marketing expenses administrative expenses total operating expenses was $1,678 million.
+Question: What was the operating expenses: selling and marketing expenses administrative expenses total operating expenses in 2022?
+Answer: For the year 2022, the operating expenses: selling and marketing expenses administrative expenses total operating expenses was $1,560 million.
+Question: What was the operating profit in 2024?
+Answer: For the year 2024, the operating profit was $3,834 million.
+Question: What was the operating profit in 2023?
+Answer: For the year 2023, the operating profit was $3,825 million.
+Question: What was the operating profit in 2022?
+Answer: For the year 2022, the operating profit was $3,755 million.
+Question: What was the other income, net finance cost profit before income taxes in 2024?
+Answer: For the year 2024, the other income, net finance cost profit before income taxes was $4,346 million.
+Question: What was the other income, net finance cost profit before income taxes in 2023?
+Answer: For the year 2023, the other income, net finance cost profit before income taxes was $4,125 million.
+Question: What was the other income, net finance cost profit before income taxes in 2022?
+Answer: For the year 2022, the other income, net finance cost profit before income taxes was $4,036 million.
+Question: What was the income tax expense in 2024?
+Answer: For the year 2024, the income tax expense was $1,177 million.
+Question: What was the income tax expense in 2023?
+Answer: For the year 2023, the income tax expense was $1,142 million.
+Question: What was the income tax expense in 2022?
+Answer: For the year 2022, the income tax expense was $1,068 million.
+Question: What was the net profit in 2024?
+Answer: For the year 2024, the net profit was $3,169 million.
+Question: What was the net profit in 2023?
+Answer: For the year 2023, the net profit was $2,983 million.
+Question: What was the net profit in 2022?
+Answer: For the year 2022, the net profit was $2,968 million.
+Question: What was the other comprehensive income items that will not be reclassified subsequently to profit or loss: remeasurements of the net defined benefit liability / asset, net (11) equity instruments through other comprehensive income, net and (3) items that will be reclassified subsequently to profit or loss: fair valuation of investments, net and in 2024?
+Answer: For the year 2024, the other comprehensive income items that will not be reclassified subsequently to profit or loss: remeasurements of the net defined benefit liability / asset, net (11) equity instruments through other comprehensive income, net and (3) items that will be reclassified subsequently to profit or loss: fair valuation of investments, net and was $(30) million.
+Question: What was the other comprehensive income items that will not be reclassified subsequently to profit or loss: remeasurements of the net defined benefit liability / asset, net (11) equity instruments through other comprehensive income, net and (3) items that will be reclassified subsequently to profit or loss: fair valuation of investments, net and in 2023?
+Answer: For the year 2023, the other comprehensive income items that will not be reclassified subsequently to profit or loss: remeasurements of the net defined benefit liability / asset, net (11) equity instruments through other comprehensive income, net and (3) items that will be reclassified subsequently to profit or loss: fair valuation of investments, net and was $(6) million.
+Question: What was the fair value changes on derivatives designated as cash flow hedge, net and in 2024?
+Answer: For the year 2024, the fair value changes on derivatives designated as cash flow hedge, net and was $(1) million.
+Question: What was the fair value changes on derivatives designated as cash flow hedge, net and in 2023?
+Answer: For the year 2023, the fair value changes on derivatives designated as cash flow hedge, net and was $(1) million.
+Question: What was the exchange differences on translation of foreign operations in 2024?
+Answer: For the year 2024, the exchange differences on translation of foreign operations was $(117) million.
+Question: What was the exchange differences on translation of foreign operations in 2023?
+Answer: For the year 2023, the exchange differences on translation of foreign operations was $(697) million.
+Question: What was the exchange differences on translation of foreign operations in 2022?
+Answer: For the year 2022, the exchange differences on translation of foreign operations was $(320) million.
+Question: What was the (99) in 2024?
+Answer: For the year 2024, the (99) was $(728) million.
+Question: What was the (99) in 2023?
+Answer: For the year 2023, the (99) was $(327) million.
+Question: What was the total other comprehensive income/(loss), net of tax in 2024?
+Answer: For the year 2024, the total other comprehensive income/(loss), net of tax was $(82) million.
+Question: What was the total other comprehensive income/(loss), net of tax in 2023?
+Answer: For the year 2023, the total other comprehensive income/(loss), net of tax was $(727) million.
+Question: What was the total other comprehensive income/(loss), net of tax in 2022?
+Answer: For the year 2022, the total other comprehensive income/(loss), net of tax was $(326) million.
+Question: What was the total comprehensive income in 2024?
+Answer: For the year 2024, the total comprehensive income was $3,087 million.
+Question: What was the total comprehensive income in 2023?
+Answer: For the year 2023, the total comprehensive income was $2,256 million.
+Question: What was the total comprehensive income in 2022?
+Answer: For the year 2022, the total comprehensive income was $2,642 million.
+Question: What was the profit attributable to: owners of the company in 2024?
+Answer: For the year 2024, the profit attributable to: owners of the company was $3,167 million.
+Question: What was the profit attributable to: owners of the company in 2023?
+Answer: For the year 2023, the profit attributable to: owners of the company was $2,981 million.
+Question: What was the profit attributable to: owners of the company in 2022?
+Answer: For the year 2022, the profit attributable to: owners of the company was $2,963 million.
+Question: What was the non-controlling interests in 2024?
+Answer: For the year 2024, the non-controlling interests was $3,169 million.
+Question: What was the non-controlling interests in 2023?
+Answer: For the year 2023, the non-controlling interests was $2,983 million.
+Question: What was the non-controlling interests in 2022?
+Answer: For the year 2022, the non-controlling interests was $2,968 million.
+Question: What was the total comprehensive income attributable to: owners of the company in 2024?
+Answer: For the year 2024, the total comprehensive income attributable to: owners of the company was $3,086 million.
+Question: What was the total comprehensive income attributable to: owners of the company in 2023?
+Answer: For the year 2023, the total comprehensive income attributable to: owners of the company was $2,254 million.
+Question: What was the total comprehensive income attributable to: owners of the company in 2022?
+Answer: For the year 2022, the total comprehensive income attributable to: owners of the company was $2,637 million.
+Question: What was the non-controlling interests in 2024?
+Answer: For the year 2024, the non-controlling interests was $3,087 million.
+Question: What was the non-controlling interests in 2023?
+Answer: For the year 2023, the non-controlling interests was $2,256 million.
+Question: What was the non-controlling interests in 2022?
+Answer: For the year 2022, the non-controlling interests was $2,642 million.

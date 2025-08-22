@@ -18,9 +18,6 @@
 # In[ ]:
 
 
-from google.colab import drive
-drive.mount('/content/drive')
-get_ipython().system('pip install -r "/content/drive/My Drive/requirements.txt"')
 
 
 # ## 1. Data Extraction (`_01_data_extract.py`)
@@ -41,7 +38,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 # --- Google Drive Mounting ---
 # This will prompt you for authorization when you run it in a Colab cell.
-drive.mount('/content/drive')
+#drive.mount('/content/drive')
 
 def pdf_to_text(pdf_path, ocr=False):
     """Extract text from a PDF, preserving the natural reading order."""
@@ -125,11 +122,7 @@ from collections import Counter
 import logging
 
 # NEW: Imports and setup for Google Drive in Colab
-from google.colab import drive
-drive.mount('/content/drive')
 
-# Optional: Install poppler if needed for pdf2image (run once)
-get_ipython().system('apt-get install poppler-utils -y')
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -233,7 +226,7 @@ def clean_processed_sheet(text):
 
 def main():
     # MODIFIED: Use Google Drive paths
-    base_dir = '/content/drive/MyDrive/'  # Adjust if your folder structure is different
+    
     files = [os.path.join(base_dir, "data/raw/infosys_2023.pdf"),
              os.path.join(base_dir, "data/raw/infosys_2024.pdf")]
 
@@ -279,14 +272,14 @@ def main():
         sections = segment_report(cleaned_text_processed)
 
         for name, content in sections.items():
-            segmented_path = os.path.join(base_dir, f"data/segmented/infosys_{year}_{name}.txt")
+            segmented_path = os.path.join( f"data/segmented/infosys_{year}_{name}.txt")
             with open(segmented_path, "w", encoding="utf-8") as f:
                 f.write(content)
             logger.info(f"Saved {name} to {segmented_path}")
 
 def validate_steps():
     # MODIFIED: Use Google Drive paths
-    base_dir = '/content/drive/MyDrive/'
+   
 
     # Define expected values and headers
     validation_config = [
@@ -387,7 +380,7 @@ logger = logging.getLogger(__name__)
 
 # --- Google Drive Mounting ---
 # This will prompt you for authorization when you run it in a Colab cell.
-drive.mount('/content/drive')
+
 
 # --- Core Validation Functions (No changes needed here) ---
 
@@ -437,29 +430,29 @@ def validate_key_figures(file_path, expected_values, section_header, forbidden_k
 
 def main_validator():
     # --- MODIFIED: Define base path for Google Drive ---
-    drive_base_path = "/content/drive/My Drive/"
+
 
     # --- MODIFIED: Use os.path.join to create full paths for Google Drive ---
     # The relative paths are now joined with your Drive's base path.
     validation_config = [
         {
-            "file": os.path.join(drive_base_path, "data/segmented/infosys_2023_balance_sheet.txt"),
+            "file": os.path.join( "data/segmented/infosys_2023_balance_sheet.txt"),
             "header": "Consolidated Balance Sheet",
             "expected_values": {"Total assets": "15,312", "Total equity": "9,224"}
         },
         {
-            "file": os.path.join(drive_base_path, "data/segmented/infosys_2023_income_statement.txt"),
+            "file": os.path.join( "data/segmented/infosys_2023_income_statement.txt"),
             "header": "Consolidated Statements of Comprehensive Income",
             "expected_values": {"Revenues": "18,212", "Net profit": "2,983"}
         },
         # You can add configurations for 2024 as well
         {
-            "file": os.path.join(drive_base_path, "data/segmented/infosys_2024_balance_sheet.txt"),
+            "file": os.path.join( "data/segmented/infosys_2024_balance_sheet.txt"),
             "header": "Consolidated Balance Sheet",
             "expected_values": {"Total assets": "16,523", "Total equity": "10,605"}
         },
         {
-            "file": os.path.join(drive_base_path, "data/segmented/infosys_2024_income_statement.txt"),
+            "file": os.path.join( "data/segmented/infosys_2024_income_statement.txt"),
             "header": "Consolidated Statements of Comprehensive Income",
             "expected_values": {"Revenues": "18,562", "Net profit": "3,169"}
         }
@@ -498,8 +491,7 @@ import json
 import logging
 
 # NEW: Imports and setup for Google Drive in Colab
-from google.colab import drive
-drive.mount('/content/drive')
+
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
@@ -544,12 +536,12 @@ def generate_qa_from_text(text_content, file_path):
 
 def main_qa_generator():
     # MODIFIED: Use Google Drive paths
-    base_dir = '/content/drive/MyDrive/'  # Adjust if your folder structure is different
+  # Adjust if your folder structure is different
     input_files = [
-        os.path.join(base_dir, "data/segmented/infosys_2023_balance_sheet.txt"),
-        os.path.join(base_dir, "data/segmented/infosys_2024_balance_sheet.txt"),
-        os.path.join(base_dir, "data/segmented/infosys_2023_income_statement.txt"),
-        os.path.join(base_dir, "data/segmented/infosys_2024_income_statement.txt")
+        os.path.join("data/segmented/infosys_2023_balance_sheet.txt"),
+        os.path.join("data/segmented/infosys_2024_balance_sheet.txt"),
+        os.path.join("data/segmented/infosys_2023_income_statement.txt"),
+        os.path.join("data/segmented/infosys_2024_income_statement.txt")
     ]
 
     all_qa_pairs = []
@@ -588,7 +580,7 @@ from uuid import uuid4
 import json
 
 # New imports for Google Colab
-from google.colab import drive
+#from google.colab import drive
 
 # --- Basic Configuration ---
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -596,7 +588,7 @@ logger = logging.getLogger(__name__)
 
 # --- Google Drive Mounting ---
 # This will prompt you for authorization when you run it in a Colab cell.
-drive.mount('/content/drive')
+#drive.mount('/content/drive')
 
 # --- Core Chunking Functions (No changes needed here) ---
 
@@ -666,8 +658,8 @@ def create_sentence_chunks(text_content, file_path):
 
 def main_chunker():
     # --- MODIFIED: Define base path for Google Drive ---
-    drive_base_path = "/content/drive/My Drive/"
-
+    #drive_base_path = "/content/drive/My Drive/"
+    drive_base_path = "data/raw"
     # --- MODIFIED: Create full input file paths for Google Drive ---
     segmented_dir = os.path.join(drive_base_path, "data/segmented")
     input_files = [
@@ -743,7 +735,7 @@ logger = logging.getLogger(__name__)
 
 # --- Google Drive Mounting ---
 # This will prompt you for authorization when you run it in a Colab cell.
-drive.mount('/content/drive')
+#drive.mount('/content/drive')
 
 # --- Core Indexing Functions ---
 
@@ -802,9 +794,9 @@ def main_indexer():
     logger.info("--- 🚀 Starting Embedding and Indexing Pipeline 🚀 ---")
 
     # --- MODIFIED: Define paths for Google Drive ---
-    drive_base_path = "/content/drive/My Drive/"
-    chunks_file_path = os.path.join(drive_base_path, "data/chunks/all_sentence_chunks.json")
-    retrieval_output_dir = os.path.join(drive_base_path, "data/retrieval")
+    #drive_base_path = "/content/drive/My Drive/"
+    chunks_file_path = os.path.join( "data/chunks/all_sentence_chunks.json")
+    retrieval_output_dir = os.path.join( "data/retrieval")
 
     # Step 1: Load the processed chunks
     chunks = load_chunks_from_json(chunks_file_path)
@@ -965,15 +957,12 @@ from nltk.corpus import stopwords
 import nltk
 
 # NEW: Imports and setup for Google Drive in Colab
-from google.colab import drive
-drive.mount('/content/drive')
 
 # Set the base directory in Google Drive (adjust if your project folder is different, e.g., '/content/drive/MyDrive/your_project_folder/')
-base_dir = '/content/drive/MyDrive/'
-os.chdir(base_dir)  # Change working directory to Google Drive base to handle relative paths
+#base_dir = '/content/drive/MyDrive/'
+#os.chdir(base_dir)  # Change working directory to Google Drive base to handle relative paths
 
-sys.path.append(os.path.join(base_dir, os.path.dirname(os.path.dirname(os.path.abspath('__file__')))))  # Adjusted for potential __file__ issues; may need tweaking based on structure
-from preprocess._08_data_load_data import load_chunks, load_faiss_index, load_bm25_index
+#sys.path.append(os.path.join(base_dir, os.path.dirname(os.path.dirname(os.path.abspath('__file__')))))  # Adjusted for potential __file__ issues; may need tweaking based on structure
 
 
 
