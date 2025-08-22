@@ -227,12 +227,12 @@ def clean_processed_sheet(text):
 def main():
     # MODIFIED: Use Google Drive paths
     
-    files = [os.path.join(base_dir, "data/raw/infosys_2023.pdf"),
-             os.path.join(base_dir, "data/raw/infosys_2024.pdf")]
+    files = [os.path.join( "data/raw/infosys_2023.pdf"),
+             os.path.join( "data/raw/infosys_2024.pdf")]
 
-    os.makedirs(os.path.join(base_dir, "data/output"), exist_ok=True)
-    os.makedirs(os.path.join(base_dir, "data/clean"), exist_ok=True)
-    os.makedirs(os.path.join(base_dir, "data/segmented"), exist_ok=True)
+    os.makedirs(os.path.join( "data/output"), exist_ok=True)
+    os.makedirs(os.path.join( "data/clean"), exist_ok=True)
+    os.makedirs(os.path.join( "data/segmented"), exist_ok=True)
 
     for file_path in files:
         year = os.path.basename(file_path).split("_")[1].split(".")[0]
@@ -254,7 +254,7 @@ def main():
             continue
 
         # Save raw text
-        raw_text_path = os.path.join(base_dir, f"data/output/infosys_{year}_raw.txt")
+        raw_text_path = os.path.join( f"data/output/infosys_{year}_raw.txt")
         with open(raw_text_path, "w", encoding="utf-8") as f:
             f.write(text)
         logger.info(f"Saved raw text to {raw_text_path}")
@@ -263,7 +263,7 @@ def main():
         cleaned_text = clean_text(text)
         # Apply additional cleaning to remove Note column values
         cleaned_text_processed = clean_processed_sheet(cleaned_text)
-        cleaned_text_path = os.path.join(base_dir, f"data/clean/infosys_{year}_cleaned.txt")
+        cleaned_text_path = os.path.join( f"data/clean/infosys_{year}_cleaned.txt")
         with open(cleaned_text_path, "w", encoding="utf-8") as f:
             f.write(cleaned_text_processed)
         logger.info(f"Saved cleaned text to {cleaned_text_path}")
@@ -284,7 +284,7 @@ def validate_steps():
     # Define expected values and headers
     validation_config = [
         {
-            "file": os.path.join(base_dir, "data/segmented/infosys_2023_balance_sheet.txt"),
+            "file": os.path.join( "data/segmented/infosys_2023_balance_sheet.txt"),
             "year": "2023",
             "section": "balance_sheet",
             "header": "Consolidated Balance Sheet",
@@ -294,7 +294,7 @@ def validate_steps():
             }
         },
         {
-            "file": os.path.join(base_dir, "data/segmented/infosys_2023_income_statement.txt"),
+            "file": os.path.join( "data/segmented/infosys_2023_income_statement.txt"),
             "year": "2023",
             "section": "income_statement",
             "header": "Consolidated Statements of Comprehensive Income",
@@ -304,7 +304,7 @@ def validate_steps():
             }
         },
         {
-            "file": os.path.join(base_dir, "data/segmented/infosys_2024_balance_sheet.txt"),
+            "file": os.path.join( "data/segmented/infosys_2024_balance_sheet.txt"),
             "year": "2024",
             "section": "balance_sheet",
             "header": "Consolidated Balance Sheet",
@@ -314,7 +314,7 @@ def validate_steps():
             }
         },
         {
-            "file": os.path.join(base_dir, "data/segmented/infosys_2024_income_statement.txt"),
+            "file": os.path.join( "data/segmented/infosys_2024_income_statement.txt"),
             "year": "2024",
             "section": "income_statement",
             "header": "Consolidated Statements of Comprehensive Income",
@@ -371,8 +371,7 @@ import re
 import logging
 import os
 
-# New imports for Google Colab
-from google.colab import drive
+
 
 # --- Basic Configuration ---
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -555,7 +554,7 @@ def main_qa_generator():
         except Exception as e:
             logger.error(f"Error processing {file_path}: {e}")
 
-    output_path = os.path.join(base_dir, "data/qa/financial_qa_pairs.json")
+    output_path = os.path.join( "data/qa/financial_qa_pairs.json")
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(all_qa_pairs, f, indent=4)
@@ -724,7 +723,6 @@ from nltk.tokenize import word_tokenize
 import json
 nltk.download('punkt_tab')
 # New imports for Google Colab
-from google.colab import drive
 
 # --- Initial Setup ---
 # Download necessary NLTK data
