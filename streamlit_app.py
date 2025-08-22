@@ -662,10 +662,10 @@ def main_chunker():
     # --- MODIFIED: Create full input file paths for Google Drive ---
    
     input_files = [
-        os.path.join( "infosys_2023_balance_sheet.txt"),
-        os.path.join( "infosys_2024_balance_sheet.txt"),
-        os.path.join( "infosys_2023_income_statement.txt"),
-        os.path.join( "infosys_2024_income_statement.txt")
+        "data/segmented/infosys_2023_balance_sheet.txt",
+       "data/segmented/infosys_2024_balance_sheet.txt",
+        "data/segmented/infosys_2023_income_statement.txt",
+        "data/segmented/infosys_2024_income_statement.txt"
     ]
 
    
@@ -685,10 +685,10 @@ def main_chunker():
 
     # --- MODIFIED: Define the full output path for the JSON file ---
     output_json_path = "data/chunks", "all_sentence_chunks.json"
-    with open("data/chunks", 'w', encoding='utf-8') as f:
+    with open("data/chunks/all_sentence_chunks.json", 'w', encoding='utf-8') as f:
         json.dump(all_chunks, f, indent=4)
 
-    logger.info(f"✅ Successfully saved all {len(all_chunks)} chunks to {"data/chunks"}")
+    logger.info(f"✅ Successfully saved all {len(all_chunks)} chunks to {"data/chunks/all_sentence_chunks.json"}")
 
 if __name__ == "__main__":
     main_chunker()
