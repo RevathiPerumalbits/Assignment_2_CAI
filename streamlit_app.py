@@ -508,6 +508,7 @@ def hybrid_retrieval(query: str,
             candidate_chunks.append(chunk)
         if len(candidate_chunks) >= RetrievalConfig.FINAL_TOP_K:
             break
+    print(f"candidate_chunks{candidate_chunks}")
     return candidate_chunks
 # Initialize models and FAISS index
 @st.cache_resource
