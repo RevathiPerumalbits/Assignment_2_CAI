@@ -1,0 +1,17 @@
+pytesseract
+PyMuPDF
+pdf2image
+pandas
+pdfplumber
+sentence-transformers
+nltk
+faiss-cpu
+rank_bm25
+streamlit
+accelerate
+peft
+peft
+bitsandbytes
+torch
+#pip install torch==2.2.0 transformers==4.41.2 sentence-transformers==2.7.0 torchaudio==2.2.0 torchvision==0.17.0
+#!pip install -q -U torch bitsandbytes transformers peft accelerate
