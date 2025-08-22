@@ -504,6 +504,7 @@ def hybrid_retrieval(query: str,
     print(f"top_ids{top_ids}")
     for cid in top_ids:
         chunk = next((c for c in chunks if c["id"] == cid), None)
+        print(f"chunk{chunk}")
         if chunk and chunk["text"].strip() not in seen_texts:
             seen_texts.add(chunk["text"].strip())
             candidate_chunks.append(chunk)
