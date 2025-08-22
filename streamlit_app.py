@@ -1148,18 +1148,18 @@ def main():
         with st.spinner("Generating answer..."):
             answer = rag_generate(query, results, RetrievalConfig)
 
-        elapsed = time.time() - start
+        #elapsed = time.time() - start
 
         st.subheader("Answer")
         st.markdown(f"**{answer}**")
 
-        with st.expander("Show Retrieval Details"):
+        """ with st.expander("Show Retrieval Details"):
             st.write(f"**Response Time**: {elapsed:.2f} sec")
             st.write(f"**Merged Context Blocks**: {len(results)}")
             for i, ch in enumerate(results, 1):
                 src = ch['metadata'].get('file_path', 'unknown')
                 st.info(f"**[{i}] Source**: {src}\n\n**Text**: {ch['text'][:1200]}{'...' if len(ch['text'])>1200 else ''}")
-
+ """
 if __name__ == "__main__":
     main()
 
