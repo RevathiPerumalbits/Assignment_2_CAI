@@ -1055,123 +1055,47 @@ def hybrid_retrieval(query: str,
 # =============================
 # RAG Generation
 # =============================
-
 def rag_generate(query: str, retrieved_chunks: List[Dict], cfg: RetrievalConfig) -> str:
-    logger.info("Generating answer from merged chunks...")
-    if not retrieved_chunks:
-        return "No relevant information was found to generate an answer."
+    from rank_bm25 import BM25Okapi
+    from sentence_transformers import SentenceTransformer
+    import numpy as np
+    from sklearn.metrics.pairwise import cosine_similarity
 
-    # Updated regex to match full financial numbers
-    number_pattern = re.compile(
-        r"\$?(?:\d{1,3}(?:,\d{3})*|\d+)(?:\.\d+)?(?:\s*(?:million|billion|mn|bn|m|b))\b",
-        re.IGNORECASE
-    )
-    year_pattern = re.compile(r"\b(19|20)\d{2}\b")
-    keyword_variants = [
-        "total assets", "total asset", "assets total", "total liabilities",
-        "total equity", "cash and cash equivalents", "revenues", "net profit",
-        "income tax expense"
-    ]
+    # Sample corpus
+    docs = ["RAG combines retrieval and generation",
+            "BM25 is a keyword-based retrieval method",
+            "Dense retrieval uses embeddings"]
 
-    def find_number_near_keyword(chunks, keywords, window_chars=200):
-        # Prioritize chunks containing the query's main keyword
-        query_keywords = [kw for kw in keywords if kw in query.lower()]
-        for chunk in chunks:
-            txt = chunk.get("text", "").lower()
-            src = chunk.get("metadata", {}).get("file_path", "unknown")
-            # Log chunk metadata for debugging
-            logger.debug(f"Processing chunk: {txt[:200]}... (Source: {src})")
-            # Check for query-specific keywords first
-            for kw in query_keywords:
-                idx = txt.find(kw)
-                if idx != -1:
-                    start = max(0, idx - 50)
-                    end = min(len(txt), idx + window_chars)
-                    window = txt[start:end]
-                    matches = number_pattern.finditer(window)
-                    for m in matches:
-                        val = m.group(0).strip()
-                        # Log all matches for debugging
-                        logger.debug(f"Found potential number: {val} in window: {window[:100]}...")
-                        # Check if the number is part of a year
-                        if not year_pattern.search(txt[max(0, m.start() - 10):m.end() + 10]):
-                            # Verify metadata consistency
-                            if "2023" in query.lower() and "2023" in txt and "2024" in src:
-                                logger.warning(f"Metadata mismatch: 2023 data in {src}")
-                            logger.info(f"Extracted number: {val} from chunk: {txt[:200]}...")
-                            return val, chunk
-        # Fallback to any chunk with any keyword
-        for chunk in chunks:
-            txt = chunk.get("text", "").lower()
-            src = chunk.get("metadata", {}).get("file_path", "unknown")
-            logger.debug(f"Processing chunk: {txt[:200]}... (Source: {src})")
-            for kw in keywords:
-                idx = txt.find(kw)
-                if idx != -1:
-                    start = max(0, idx - 50)
-                    end = min(len(txt), idx + window_chars)
-                    window = txt[start:end]
-                    matches = number_pattern.finditer(window)
-                    for m in matches:
-                        val = m.group(0).strip()
-                        logger.debug(f"Found potential number: {val} in window: {window[:100]}...")
-                        if not year_pattern.search(txt[max(0, m.start() - 10):m.end() + 10]):
-                            if "2023" in query.lower() and "2023" in txt and "2024" in src:
-                                logger.warning(f"Metadata mismatch: 2023 data in {src}")
-                            logger.info(f"Extracted number: {val} from chunk: {txt[:200]}...")
-                            return val, chunk
-        return None, None
+    # --- Sparse Retrieval (BM25) ---
+    tokenized_docs = [doc.lower().split() for doc in docs]
+    bm25 = BM25Okapi(tokenized_docs)
 
-    tokenizer = AutoTokenizer.from_pretrained(cfg.GEN_MODEL_NAME)
-    context_parts = []
-    token_budget = cfg.CTX_MAX_TOKENS
-    for ch in retrieved_chunks:
-        t = ch.get("text", "").strip()
-        tokens = tokenizer(t, return_tensors='pt')['input_ids'].shape[1]
-        if tokens <= token_budget:
-            context_parts.append(t)
-            token_budget -= tokens
-        if token_budget <= 0:
-            break
-    context = "\n\n".join(context_parts)
+    # --- Dense Retrieval (Embeddings) ---
+    model = SentenceTransformer('all-MiniLM-L6-v2')
+    embeddings = model.encode(docs, convert_to_tensor=True)
 
-    numeric_query = bool(re.search(r"\b(19|20)\d{2}\b", query)) or any(w in query.lower() for w in ["assets", "revenue", "profit", "income", "liabilities", "cash"])
-    if numeric_query:
-        match_text, match_chunk = find_number_near_keyword(retrieved_chunks, keyword_variants)
-        if match_text:
-            src = match_chunk.get("metadata", {}).get("file_path", "unknown")
-            logger.info(f"Numeric extraction success: '{match_text}' from {src}")
-            return match_text
+    # Query
+    query = "how to use retrieval in RAG"
+    query_tokens = query.lower().split()
+    query_embedding = model.encode([query], convert_to_tensor=True)
 
-    prompt = (
-        "You are a precise financial assistant. Answer ONLY using the exact words or numbers from the context.\n"
-        "If the exact answer is not present, reply 'Not found'. Do not invent numbers.\n\n"
-        f"Context:\n{context}\n\n"
-        f"Question: {query}\nAnswer:"
-    )
+    # BM25 scores
+    bm25_scores = bm25.get_scores(query_tokens)
 
-    inputs = tokenizer(prompt, return_tensors='pt', truncation=True, max_length=1024)
-    truncated_prompt = tokenizer.decode(inputs['input_ids'][0], skip_special_tokens=True)
+    # Dense scores
+    dense_scores = cosine_similarity(query_embedding, embeddings)[0]
 
-    try:
-        generator = pipeline('text-generation', model=cfg.GEN_MODEL_NAME, device=-1)
-        response = generator(
-            truncated_prompt,
-            max_new_tokens=120,
-            do_sample=False,
-            num_return_sequences=1,
-            pad_token_id=tokenizer.eos_token_id,
-            eos_token_id=tokenizer.eos_token_id
-        )[0]['generated_text']
-        answer = response.replace(truncated_prompt, "").strip().split('\n')[0].strip()
-        logger.info(f"Generated answer: {answer}")
-        return answer
-    except ValueError as ve:
-        logger.error(f"Model loading error: {ve}")
-        return "Failed to load the generative model."
-    except RuntimeError as excp:
-        logger.error(f"Generation error: {excp}")
-        return "An error occurred during answer generation."
+    # Weighted Fusion
+    alpha = 0.7  # dense weight
+    beta = 0.3   # sparse weight
+    final_scores = alpha * dense_scores + beta * bm25_scores
+
+    # Rank results
+    ranked_docs = [docs[i] for i in np.argsort(final_scores)[::-1]]
+    print("Ranked Results:", ranked_docs)
+    return ranked_docs
+
+
 
 # =============================
 # Streamlit App
