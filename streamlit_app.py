@@ -26,6 +26,7 @@ import nltk
 from nltk.tokenize import word_tokenize
 import json
 nltk.download('punkt_tab')
+nltk.download('stopwords')
 # New imports for Google Colab
 
 # --- Initial Setup ---
