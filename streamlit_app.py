@@ -658,7 +658,7 @@ def create_sentence_chunks(text_content, file_path):
 def main_chunker():
     # --- MODIFIED: Define base path for Google Drive ---
     #drive_base_path = "/content/drive/My Drive/"
-    drive_base_path = "data/raw"
+
     # --- MODIFIED: Create full input file paths for Google Drive ---
    
     input_files = [
@@ -668,9 +668,7 @@ def main_chunker():
         os.path.join( "infosys_2024_income_statement.txt")
     ]
 
-    # --- MODIFIED: Define the output folder in Google Drive ---
-    output_folder = os.path.join( "data/chunks")
-    os.makedirs("data/chunks", exist_ok=True)
+   
 
     all_chunks = []
     for file_path in input_files:
@@ -686,7 +684,7 @@ def main_chunker():
             logger.error(f"Error processing {file_path}: {str(e)}")
 
     # --- MODIFIED: Define the full output path for the JSON file ---
-    output_json_path = os.path.join(output_folder, "all_sentence_chunks.json")
+    output_json_path = os.path.join("data/chunks", "all_sentence_chunks.json")
     with open(output_json_path, 'w', encoding='utf-8') as f:
         json.dump(all_chunks, f, indent=4)
 
@@ -793,11 +791,10 @@ def main_indexer():
 
     # --- MODIFIED: Define paths for Google Drive ---
     #drive_base_path = "/content/drive/My Drive/"
-    chunks_file_path = os.path.join( "data/chunks/all_sentence_chunks.json")
-    retrieval_output_dir = os.path.join( "data/retrieval")
+    
 
     # Step 1: Load the processed chunks
-    chunks = load_chunks_from_json(chunks_file_path)
+    chunks = load_chunks_from_json("data/chunks/all_sentence_chunks.json")
     if not chunks:
         logger.error("No chunks found. Please run the chunking script first. Exiting.")
         return
@@ -810,8 +807,8 @@ def main_indexer():
 
     # Step 3: Build and save the search indexes
     chunk_ids = [chunk["id"] for chunk in chunks]
-    build_faiss_index(embeddings, chunk_ids, retrieval_output_dir)
-    build_bm25_index(chunks, retrieval_output_dir)
+    build_faiss_index(embeddings, chunk_ids, "data/retrieval")
+    build_bm25_index(chunks, "data/retrieval")
 
     logger.info("--- ✅ Pipeline Finished Successfully ---")
 
