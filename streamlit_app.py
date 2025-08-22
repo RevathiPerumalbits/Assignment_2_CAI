@@ -501,6 +501,7 @@ def hybrid_retrieval(query: str,
     top_ids = sorted(combined, key=combined.get, reverse=True)
     seen_texts = set()
     candidate_chunks = []
+    print(f"top_ids{top_ids}")
     for cid in top_ids:
         chunk = next((c for c in chunks if c["id"] == cid), None)
         if chunk and chunk["text"].strip() not in seen_texts:
