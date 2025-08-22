@@ -684,11 +684,11 @@ def main_chunker():
             logger.error(f"Error processing {file_path}: {str(e)}")
 
     # --- MODIFIED: Define the full output path for the JSON file ---
-    output_json_path = os.path.join("data/chunks", "all_sentence_chunks.json")
-    with open(output_json_path, 'w', encoding='utf-8') as f:
+    output_json_path = "data/chunks", "all_sentence_chunks.json"
+    with open("data/chunks", 'w', encoding='utf-8') as f:
         json.dump(all_chunks, f, indent=4)
 
-    logger.info(f"✅ Successfully saved all {len(all_chunks)} chunks to {output_json_path}")
+    logger.info(f"✅ Successfully saved all {len(all_chunks)} chunks to {"data/chunks"}")
 
 if __name__ == "__main__":
     main_chunker()
