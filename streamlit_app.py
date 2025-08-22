@@ -469,9 +469,9 @@ def main_validator():
             forbidden_keywords
         )
         if success:
-            logger.info(f"✅ Validation successful for {os.path.basename(config['file'])}")
+            logger.info(f"✅ Validation successful for {config['file']}")
         else:
-            logger.warning(f"❌ Validation failed for {os.path.basename(config['file'])}")
+            logger.warning(f"❌ Validation failed for {config['file']}")
 
 if __name__ == "__main__":
     main_validator()
