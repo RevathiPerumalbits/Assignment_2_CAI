@@ -1,44 +1,45 @@
-import streamlit as st
-from sentence_transformers import SentenceTransformer
-import faiss
-import numpy as np
-from transformers import pipeline
-import numpy as np
-import streamlit as st
-import os
-import sys
-import re  # Ensure re is imported at the top
-import time
-from typing import List, Dict, Tuple
-import pdfplumber
+#!/usr/bin/env python
+# coding: utf-8
+
+# # Financial Document Analysis and Q&A Pipeline
+# 
+# This Jupyter Notebook consolidates a series of Python scripts into a cohesive pipeline for extracting, cleaning, segmenting, and analyzing financial data from PDF documents. The ultimate goal is to create a retrieval system capable of answering questions based on the document's content.
+# 
+# The pipeline is organized into the following logical steps:
+# 1.  **Data Extraction**: Reading text from PDF files.
+# 2.  **Text Cleaning**: Removing noise and standardizing the extracted text.
+# 3.  **Document Segmentation**: Isolating specific financial statements (e.g., Balance Sheet, Income Statement).
+# 4.  **Validation**: Ensuring the segmented sections are correct and complete.
+# 5.  **Q&A Generation**: Creating question-answer pairs from the financial data (for fine-tuning or evaluation).
+# 6.  **Chunking**: Breaking down the text into small, meaningful sentences for embedding.
+# 7.  **Embedding & Indexing**: Converting text chunks into numerical vectors and building search indexes (FAISS and BM25).
+# 8.  **Data Loading**: Utility functions to load the generated indexes and chunks for the final application.
+
+# In[ ]:
+
+
+
+
+# ## 1. Data Extraction (`_01_data_extract.py`)
+# 
+# This script is the first step in our pipeline. It's responsible for extracting raw text from PDF documents. It uses the `pdfplumber` library, which is excellent at preserving the layout and reading order of the text within a PDF. It also includes a fallback mechanism to use Optical Character Recognition (OCR) via `pytesseract` if a PDF contains images of text instead of selectable text.
+
+# In[ ]:
+
+
+import fitz  # PyMuPDF
 import pytesseract
+from pdf2image import convert_from_path
+import os
+import logging
+import pdfplumber
 
-from sentence_transformers import SentenceTransformer
-from transformers import pipeline, AutoTokenizer
-import json
-import pickle
-import faiss
-from rank_bm25 import BM25Okapi
-from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
-import nltk
-import nltk
-from nltk.tokenize import word_tokenize
-import json
-nltk.download('punkt_tab')
-nltk.download('stopwords')
-# New imports for Google Colab
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logger = logging.getLogger(__name__)
+# --- Google Drive Mounting ---
+# This will prompt you for authorization when you run it in a Colab cell.
+#drive.mount('/content/drive')
 
-# --- Initial Setup ---
-# Download necessary NLTK data
-nltk.download('punkt', quiet=True)
-# Sample knowledge base
-documents = [
-    "Consolidated Balance Sheet as of March 31, (Dollars in millions except equity share data) Note ASSETS Current assets Cash and cash equivalents 1,481 2,305 Current investments Trade receivables 3,094 2,995 Unbilled revenues 1,861 1,526 Prepayments and other current assets 1,336 1,133 Income tax assets Derivative financial instruments Total current assets 8,626 8,865 Non-current assets Property, plant and equipment 1,679 1,793 Right-of-use assets Goodwill Intangible assets Non-current investments 1,530 1,801 Unbilled revenues Deferred income tax assets Income tax assets Other non-current assets Total non-current assets 6,686 6,690 Total assets 15,312 15,555 LIABILITIES AND EQUITY Current liabilities Trade payables Lease liabilities Derivative financial instruments Current income tax liabilities Unearned revenues Employee benefit obligations Provisions Other current liabilities 2,403 2,170 Total current liabilities 4,769 4,433 Non-current liabilities Lease liabilities Deferred income tax liabilities Employee benefit obligations Other non-current liabilities Total liabilities 6,088 5,561 Equity Share capital – ₹5/- ($0.16) par value 4,800,000,000 (4,800,000,000) authorized equity shares, issued and outstanding 4,136,387,925 (4,193,012,929) equity shares fully paid up, net of 12,172,119 (13,725,712) treasury shares each as of March 31, 2023 (March 31, 2022), respectively Share premium Retained earnings 11,401 11,672 Cash flow hedge reserve – Other reserves 1,370 1,170 Capital redemption reserve Other components of equity (4,314) (3,588) Total equity attributable to equity holders of the company 9,172 9,941 Non-controlling interests Total equity 9,224 9,994 Total liabilities and equity 15,312",
-    "Consolidated Statements of Comprehensive Income for the years ended March 31, (Dollars in millions except equity share and per equity share data) Note Revenues 18,212 16,311 13,561 Cost of sales 12,709 10,996 8,828 Gross profit 5,503 5,315 4,733 Operating expenses: Selling and marketing expenses Administrative expenses Total operating expenses 1,678 1,560 1,408 Operating profit 3,825 3,755 3,325 Other income, net Finance cost Profit before income taxes 4,125 4,036 3,596 Income tax expense 1,142 1,068 Net profit 2,983 2,968 2,623 Other comprehensive income Items that will not be reclassified subsequently to profit or loss: Remeasurements of the net defined benefit liability / asset, net (11) Equity instruments through other comprehensive income, net and (3) Items that will be reclassified subsequently to profit or loss: Fair valuation of investments, net and (30) (6) (14) Fair value changes on derivatives designated as cash flow hedge, net and (1) (1) Exchange differences on translation of foreign operations (697) (320) (728) (327) Total other comprehensive income/(loss), net of tax (727) (326) Total comprehensive income 2,256 2,642 2,979 Profit attributable to: Owners of the company 2,981 2,963 2,613 Non-controlling interests 2,983 2,968 2,623 Total comprehensive income attributable to: Owners of the company 2,254 2,637 2,968 Non-controlling interests 2,256 2,642 2,979 Earnings per equity share Basic (in $ per share) 0.70 Diluted (in $ per share) 0.70.",
-    "Consolidated Balance Sheet as of March 31, (Dollars in millions except equity share data) Note ASSETS Current assets Cash and cash equivalents 1,773 1,481 Current investments 1,548 Trade receivables 3,620 3,094 Unbilled revenues 1,531 1,861 Prepayments and other current assets 1,473 1,336 Income tax assets Derivative financial instruments Total current assets 10,722 8,626 Non-current assets Property, plant and equipment 1,537 1,679 Right-of-use assets Goodwill Intangible assets Non-current investments 1,404 1,530 Unbilled revenues Deferred income tax assets Income tax assets Other non-current assets Total non-current assets 5,801 6,686 Total assets 16,523 15,312 LIABILITIES AND EQUITY Current liabilities Trade payables Lease liabilities Derivative financial instruments Current income tax liabilities Unearned revenues Employee benefit obligations Provisions Other current liabilities 2,099 2,403 Total current liabilities 4,651 4,769 Non-current liabilities Lease liabilities Deferred income tax liabilities Employee benefit obligations Other non-current liabilities Total liabilities 5,918 6,088 Equity Share capital – ₹5/- ($0.16) par value 4,800,000,000 (4,800,000,000) authorized equity shares, issued and outstanding 4,139,950,635 (4,136,387,925) equity shares fully paid up, net of 10,916,829 (12,172,119) treasury shares each as of March 31, 2024 (March 31, 2023), respectively Share premium Retained earnings 12,557 11,401 Cash flow hedge reserve – Other reserves 1,623 1,370 Capital redemption reserve Other components of equity (4,396) (4,314) Total equity attributable to equity holders of the company 10,559 9,172 Non-controlling interests Total equity 10,605 9,224 Total liabilities and equity 16,523.",
-    "TConsolidated Statements of Comprehensive Income for the years ended March 31, (Dollars in millions except equity share and per equity share data) Note Revenues 18,562 18,212 16,311 Cost of sales 12,975 12,709 10,996 Gross profit 5,587 5,503 5,315 Operating expenses: Selling and marketing expenses Administrative expenses Total operating expenses 1,753 1,678 1,560 Operating profit 3,834 3,825 3,755 Other income, net Finance cost Profit before income taxes 4,346 4,125 4,036 Income tax expense 1,177 1,142 1,068 Net profit 3,169 2,983 2,968 Other comprehensive income Items that will not be reclassified subsequently to profit or loss: Remeasurements of the net defined benefit liability / asset, net (11) Equity instruments through other comprehensive income, net and (3) Items that will be reclassified subsequently to profit or loss: Fair valuation of investments, net and (30) (6) Fair value changes on derivatives designated as cash flow hedge, net and (1) (1) Exchange differences on translation of foreign operations (117) (697) (320) (99) (728) (327) Total other comprehensive income/(loss), net of tax (82) (727) (326) Total comprehensive income 3,087 2,256 2,642 Profit attributable to: Owners of the company 3,167 2,981 2,963 Non-controlling interests 3,169 2,983 2,968 Total comprehensive income attributable to: Owners of the company 3,086 2,254 2,637 Non-controlling interests 3,087 2,256 2,642 Earnings per equity share Basic (in $ per share) 0.71 Diluted (in $ per share) 0.71."
-]
 def pdf_to_text(pdf_path, ocr=False):
     """Extract text from a PDF, preserving the natural reading order."""
     logger.info(f"Extracting text from {pdf_path}...")
@@ -136,6 +137,47 @@ def normalize_number(value):
         return value
     except ValueError:
         return value
+
+def validate_key_figures(file_path, expected_values, section_header, forbidden_keywords):
+    """Validate key figures, header, and section purity in a segmented file."""
+    try:
+        if not os.path.exists(file_path):
+            logger.error(f"File not found: {file_path}")
+            return False
+
+        with open(file_path, "r", encoding="utf-8") as f:
+            text = f.read()
+
+        # Check section header
+        if section_header.upper() not in text.upper():
+            logger.warning(f"Missing header {section_header} in {file_path}")
+            return False
+        else:
+            logger.info(f"Found header {section_header} in {file_path}")
+
+        # Check key figures
+        all_found = True
+        for key, value in expected_values.items():
+            normalized_value = normalize_number(value)
+            # Try direct match, regex with key-value, and standalone value
+            if (normalized_value in text or
+                re.search(rf"{key}\s*[:=]?\s*{value}", text, re.IGNORECASE) or
+                re.search(rf"\b{normalized_value}\b", text, re.IGNORECASE)):
+                logger.info(f"Found {key}: {value} in {file_path}")
+            else:
+                logger.warning(f"Missing or incorrect {key}: {value} in {file_path}")
+                all_found = False
+
+        # Check for contamination
+        for keyword in forbidden_keywords:
+            if keyword.upper() in text.upper():
+                logger.warning(f"Found forbidden {keyword} in {file_path}")
+                all_found = False
+
+        return all_found
+    except Exception as e:
+        logger.error(f"Error validating {file_path}: {e}")
+        return False
 
 def segment_report(text: str) -> dict:
     """
@@ -235,11 +277,81 @@ def main():
                 f.write(content)
             logger.info(f"Saved {name} to {segmented_path}")
 
+def validate_steps():
+    # MODIFIED: Use Google Drive paths
+   
 
+    # Define expected values and headers
+    validation_config = [
+        {
+            "file": os.path.join( "data/segmented/infosys_2023_balance_sheet.txt"),
+            "year": "2023",
+            "section": "balance_sheet",
+            "header": "Consolidated Balance Sheet",
+            "expected_values": {
+                "Total assets": "15,312",  # Approximate, in USD millions
+                "Total equity": "9,224"
+            }
+        },
+        {
+            "file": os.path.join( "data/segmented/infosys_2023_income_statement.txt"),
+            "year": "2023",
+            "section": "income_statement",
+            "header": "Consolidated Statements of Comprehensive Income",
+            "expected_values": {
+                "Revenues": "18,212",
+                "Net profit": "2,983"
+            }
+        },
+        {
+            "file": os.path.join( "data/segmented/infosys_2024_balance_sheet.txt"),
+            "year": "2024",
+            "section": "balance_sheet",
+            "header": "Consolidated Balance Sheet",
+            "expected_values": {
+                "Total assets": "16,523",  # From prior input, in USD millions
+                "Total equity": "10,605"
+            }
+        },
+        {
+            "file": os.path.join( "data/segmented/infosys_2024_income_statement.txt"),
+            "year": "2024",
+            "section": "income_statement",
+            "header": "Consolidated Statements of Comprehensive Income",
+            "expected_values": {
+                "Revenues": "18,562",
+                "Net profit": "3,169"
+            }
+        }
+    ]
+
+    # Forbidden keywords to check for contamination
+    forbidden_keywords = [
+        "CASH FLOWS",
+        "CHANGES IN EQUITY",
+        "NOTES TO THE CONSOLIDATED"
+    ]
+
+    # Validate each file
+    for config in validation_config:
+        logger.info(f"Validating {config['section']} for {config['year']}")
+        success = validate_key_figures(
+            config["file"],
+            config["expected_values"],
+            config["header"],
+            forbidden_keywords
+        )
+        if success:
+            logger.info(f"Validation successful for {config['file']}")
+        else:
+            logger.warning(f"Validation failed for {config['file']}")
 
 if __name__ == "__main__":
     logger.info("Executing the segmentation module")
     main()
+    logger.info("validating the segmentation module")
+    validate_steps()
+
 
 # ## 4. Data Validation (`_04_data_validate.py`)
 # 
@@ -278,6 +390,179 @@ def normalize_number(value):
     except (ValueError, AttributeError):
         return str(value)
 
+def validate_key_figures(file_path, expected_values, section_header, forbidden_keywords):
+    """Validate key figures, header, and section purity in a segmented file."""
+    try:
+        if not os.path.exists(file_path):
+            logger.error(f"File not found: {file_path}")
+            return False
+
+        with open(file_path, "r", encoding="utf-8") as f:
+            text = f.read()
+
+        # Check section header
+        if section_header.upper() not in text.upper():
+            logger.warning(f"Missing header '{section_header}' in {file_path}")
+            return False
+
+        # Check key figures
+        all_found = True
+        for key, value in expected_values.items():
+            normalized_value = normalize_number(value)
+            # Use regex to find the key followed by the value anywhere in the text
+            if re.search(rf"{re.escape(key)}.*?{re.escape(normalized_value)}", text, re.IGNORECASE | re.DOTALL):
+                logger.info(f"Found '{key}: {value}' in {file_path}")
+            else:
+                logger.warning(f"Missing or incorrect '{key}: {value}' in {file_path}")
+                all_found = False
+
+        # Check for contamination from other sections
+        for keyword in forbidden_keywords:
+            if keyword.upper() in text.upper():
+                logger.warning(f"Found forbidden keyword '{keyword}' in {file_path}")
+                all_found = False
+
+        return all_found
+    except Exception as e:
+        logger.error(f"Error validating {file_path}: {e}")
+        return False
+
+def main_validator():
+    # --- MODIFIED: Define base path for Google Drive ---
+
+
+    # --- MODIFIED: Use os.path.join to create full paths for Google Drive ---
+    # The relative paths are now joined with your Drive's base path.
+    validation_config = [
+        {
+            "file": "data/segmented/infosys_2023_balance_sheet.txt",
+            "header": "Consolidated Balance Sheet",
+            "expected_values": {"Total assets": "15,312", "Total equity": "9,224"}
+        },
+        {
+            "file": "data/segmented/infosys_2023_income_statement.txt",
+            "header": "Consolidated Statements of Comprehensive Income",
+            "expected_values": {"Revenues": "18,212", "Net profit": "2,983"}
+        },
+        # You can add configurations for 2024 as well
+        {
+            "file":  "data/segmented/infosys_2024_balance_sheet.txt",
+            "header": "Consolidated Balance Sheet",
+            "expected_values": {"Total assets": "16,523", "Total equity": "10,605"}
+        },
+        {
+            "file":  "data/segmented/infosys_2024_income_statement.txt",
+            "header": "Consolidated Statements of Comprehensive Income",
+            "expected_values": {"Revenues": "18,562", "Net profit": "3,169"}
+        }
+    ]
+
+    forbidden_keywords = ["CASH FLOWS", "CHANGES IN EQUITY"]
+
+    for config in validation_config:
+        # The file path is now the full, correct path in Google Drive
+        logger.info(f"--- Validating {config['file']} ---")
+        success = validate_key_figures(
+            config["file"],
+            config["expected_values"],
+            config["header"],
+            forbidden_keywords
+        )
+        if success:
+            logger.info(f"✅ Validation successful for {config['file']}")
+        else:
+            logger.warning(f"❌ Validation failed for {config['file']}")
+
+if __name__ == "__main__":
+    main_validator()
+
+
+# ## 5. Q&A Generation (`_05_data_qa_generate.py`)
+# 
+# This script parses the validated, segmented financial statements to automatically generate question-and-answer pairs. For example, from a line item like `Revenues ... 18,562`, it creates a question: "What was the Revenues in 2024?" and an answer: "For the year 2024, the Revenues was $18,562 million." These Q&A pairs can be invaluable for fine-tuning a language model or for creating a test set to evaluate the final retrieval system's performance.
+
+# In[14]:
+
+
+import os
+import re
+import json
+import logging
+
+# NEW: Imports and setup for Google Drive in Colab
+
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logger = logging.getLogger(__name__)
+
+def generate_qa_from_text(text_content, file_path):
+    """Generates Q&A pairs from a block of financial text."""
+    qa_pairs = []
+    year_match = re.search(r'_(\d{4})_', file_path)
+    if not year_match:
+        return []
+    main_year = int(year_match.group(1))
+
+    text_data = ' '.join(text_content.split())
+    header_pattern = re.compile(r'.*?\(Dollars in millions.*?data\)\s*Note\s*', re.IGNORECASE)
+    text_data = header_pattern.sub('', text_data)
+
+    val_pattern = r'[\d,.-]+|\([\d,.-]+\)'
+    delimiter_pattern_2_col = re.compile(f'\\s+({val_pattern})\\s+({val_pattern})\\s*')
+    parts = delimiter_pattern_2_col.split(text_data)
+
+    i = 0
+    while i < len(parts):
+        item_name = parts[i].strip().lower().rstrip('.--: ')
+
+        num_values = 0
+        if (i + 1 < len(parts)) and re.fullmatch(val_pattern, parts[i+1].strip()):
+            num_values = 1
+            if (i + 2 < len(parts)) and re.fullmatch(val_pattern, parts[i+2].strip()):
+                num_values = 2
+
+        if item_name and num_values > 0:
+            values = parts[i+1 : i+1+num_values]
+            if values[0]:
+                question = f"What was the {item_name} in {main_year}?"
+                answer = f"For the year {main_year}, the {item_name} was ${values[0]} million."
+                qa_pairs.append({"question": question, "answer": answer})
+            i += (1 + num_values)
+        else:
+            i += 1
+
+    return qa_pairs
+
+def main_qa_generator():
+    # MODIFIED: Use Google Drive paths
+  # Adjust if your folder structure is different
+    input_files = [
+        os.path.join("data/segmented/infosys_2023_balance_sheet.txt"),
+        os.path.join("data/segmented/infosys_2024_balance_sheet.txt"),
+        os.path.join("data/segmented/infosys_2023_income_statement.txt"),
+        os.path.join("data/segmented/infosys_2024_income_statement.txt")
+    ]
+
+    all_qa_pairs = []
+    for file_path in input_files:
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                content = f.read().strip()
+            if content:
+                qa_pairs = generate_qa_from_text(content, file_path)
+                all_qa_pairs.extend(qa_pairs)
+        except Exception as e:
+            logger.error(f"Error processing {file_path}: {e}")
+
+    output_path = os.path.join( "data/qa/financial_qa_pairs.json")
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    with open(output_path, 'w', encoding='utf-8') as f:
+        json.dump(all_qa_pairs, f, indent=4)
+
+    logger.info(f"Successfully generated {len(all_qa_pairs)} Q&A pairs to {output_path}")
+
+if __name__ == "__main__":
+    main_qa_generator()
 
 
 # ## 6. Data Chunking (`_06_data_create_chunks.py`)
@@ -408,6 +693,284 @@ def main_chunker():
 if __name__ == "__main__":
     main_chunker()
 
+
+# ## 7. Embedding and Indexing (`_07_data_create_embedding.py`)
+# 
+# This is where we build the core of our retrieval system. The script performs two main tasks:
+# 
+# 1.  **Embedding**: It loads the sentence chunks and uses a `SentenceTransformer` model (`intfloat/e5-small-v2`) to convert each chunk's text into a high-dimensional numerical vector (an embedding). These embeddings capture the semantic meaning of the text.
+# 
+# 2.  **Indexing**: It builds two different types of search indexes:
+#     * **FAISS Index**: A library for efficient similarity search. We use it to create an index of our text embeddings, allowing us to quickly find the most semantically similar chunks to a user's query.
+#     * **BM25 Index**: A classical keyword-based search algorithm. This index is great for matching specific terms and numbers, complementing the semantic search of FAISS.
+# 
+# Both indexes are saved to disk for later use.
+
+# In[17]:
+
+
+import os
+import logging
+import pickle
+import numpy as np
+from sentence_transformers import SentenceTransformer
+from rank_bm25 import BM25Okapi
+import faiss
+import nltk
+from nltk.tokenize import word_tokenize
+import json
+nltk.download('punkt_tab')
+# New imports for Google Colab
+
+# --- Initial Setup ---
+# Download necessary NLTK data
+nltk.download('punkt', quiet=True)
+# Configure logging
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logger = logging.getLogger(__name__)
+
+# --- Google Drive Mounting ---
+# This will prompt you for authorization when you run it in a Colab cell.
+#drive.mount('/content/drive')
+
+# --- Core Indexing Functions ---
+
+def load_chunks_from_json(file_path):
+    """Loads chunks from the consolidated JSON file."""
+    logger.info(f"Reading chunks from {file_path}")
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        logger.error(f"Error: Chunks file not found at {file_path}.")
+        return []
+    except Exception as e:
+        logger.error(f"Error reading chunks from {file_path}: {e}")
+        return []
+
+def embed_chunks(chunks, model_name="intfloat/e5-small-v2"):
+    """Embeds chunks using a sentence transformer model."""
+    logger.info(f"Embedding chunks with {model_name}...")
+    try:
+        model = SentenceTransformer(model_name)
+        # Prepend "passage: " as recommended by the e5 model documentation for documents
+        texts = [f"passage: {chunk['text']}" for chunk in chunks]
+        return model.encode(texts, show_progress_bar=True, normalize_embeddings=True)
+    except Exception as e:
+        logger.error(f"Error embedding chunks: {e}")
+        return np.array([])
+
+def build_faiss_index(embeddings, chunk_ids, output_dir):
+    """Builds and saves a FAISS index for semantic search."""
+    logger.info("Building FAISS index...")
+    os.makedirs(output_dir, exist_ok=True)
+    dimension = embeddings.shape[1]
+    # Using IndexFlatIP for cosine similarity with normalized embeddings
+    index = faiss.IndexFlatIP(dimension)
+    index.add(embeddings.astype('float32'))
+
+    faiss.write_index(index, os.path.join(output_dir, "faiss_index.bin"))
+    with open(os.path.join(output_dir, "faiss_index_ids.pkl"), 'wb') as f:
+        pickle.dump(chunk_ids, f)
+    logger.info(f"Saved FAISS index with {index.ntotal} vectors to {output_dir}")
+
+def build_bm25_index(chunks, output_dir):
+    """Builds and saves a BM25 index for keyword search."""
+    logger.info("Building BM25 index...")
+    os.makedirs(output_dir, exist_ok=True)
+    tokenized_chunks = [word_tokenize(chunk["text"].lower()) for chunk in chunks]
+    bm25 = BM25Okapi(tokenized_chunks)
+
+    with open(os.path.join(output_dir, "bm25_index.pkl"), 'wb') as f:
+        pickle.dump(bm25, f)
+    logger.info(f"Saved BM25 index with {len(tokenized_chunks)} documents to {output_dir}")
+
+def main_indexer():
+    """Main function to run the full embedding and indexing pipeline."""
+    logger.info("--- 🚀 Starting Embedding and Indexing Pipeline 🚀 ---")
+
+    # --- MODIFIED: Define paths for Google Drive ---
+    #drive_base_path = "/content/drive/My Drive/"
+    
+
+    # Step 1: Load the processed chunks
+    chunks = load_chunks_from_json("data/chunks/all_sentence_chunks.json")
+    if not chunks:
+        logger.error("No chunks found. Please run the chunking script first. Exiting.")
+        return
+
+    # Step 2: Generate embeddings for the chunks
+    embeddings = embed_chunks(chunks)
+    if embeddings.size == 0:
+        logger.error("No embeddings were generated. Exiting.")
+        return
+
+    # Step 3: Build and save the search indexes
+    chunk_ids = [chunk["id"] for chunk in chunks]
+    build_faiss_index(embeddings, chunk_ids, "data/retrieval")
+    build_bm25_index(chunks, "data/retrieval")
+
+    logger.info("--- ✅ Pipeline Finished Successfully ---")
+
+if __name__ == "__main__":
+    main_indexer()
+
+
+# ## 8. Data Loading Utilities (`_08_data_load_data.py`)
+# 
+# Finally, this script provides a set of simple, reusable functions to load the artifacts we created in the previous steps. It contains functions to load:
+# - The JSON file of sentence chunks.
+# - The FAISS index and its corresponding chunk IDs.
+# - The BM25 index.
+# 
+# These functions will be used by the final application (e.g., a chatbot or an API) to quickly load the necessary data into memory to perform searches and answer user questions.
+
+# In[18]:
+
+
+import logging
+from typing import List, Dict, Tuple
+import json
+import pickle
+import faiss
+from rank_bm25 import BM25Okapi
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logger = logging.getLogger(__name__)
+
+def load_chunks(file_path: str = "data/chunks/all_sentence_chunks.json") -> List[Dict]:
+    logger.info(f"Loading chunks from: {file_path}")
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        logger.error(f"Error: File not found at {file_path}.")
+        return []
+    except Exception as e:
+        logger.error(f"An unexpected error occurred: {str(e)}")
+        return []
+
+def load_faiss_index(index_path: str = "data/retrieval/faiss_index.bin") -> Tuple[faiss.Index, List[int]]:
+    logger.info(f"Loading FAISS index from {index_path}")
+    try:
+        index = faiss.read_index(index_path)
+        id_path = index_path.replace(".bin", "_ids.pkl")
+        with open(id_path, 'rb') as f:
+            chunk_ids = pickle.load(f)
+        logger.info(f"Loaded FAISS index with {index.ntotal} vectors.")
+        return index, chunk_ids
+    except Exception as e:
+        logger.error(f"Failed to load FAISS index: {e}")
+        return None, None
+
+def load_bm25_index(index_path: str = "data/retrieval/bm25_index.pkl") -> BM25Okapi:
+    logger.info(f"Loading BM25 index from {index_path}")
+    try:
+        with open(index_path, 'rb') as f:
+            return pickle.load(f)
+    except Exception as e:
+        logger.error(f"Failed to load BM25 index: {e}")
+        return None
+
+if __name__ == "__main__":
+    logger.info("This module provides data loading functions. Example usage:")
+
+    # Example of how to use the functions:
+    # chunks = load_chunks()
+    # if chunks:
+    #     logger.info(f"Loaded {len(chunks)} chunks.")
+
+    # faiss_index, faiss_ids = load_faiss_index()
+    # if faiss_index:
+    #     logger.info("FAISS index loaded.")
+
+    # bm25_index = load_bm25_index()
+    # if bm25_index:
+    #     logger.info("BM25 index loaded.")
+
+
+# # Financial Document Analysis and Q&A Pipeline
+
+# ### **Hybrid Retrieval Pipeline**
+# 
+# For each user query, the following steps are performed:
+# 1.  **Preprocess**: The query is cleaned, converted to lowercase, and stopwords are removed.
+# 2.  **Generate Query Embedding**: A numerical vector representation of the query is created.
+# 3.  **Retrieve Top-N Chunks**: The most relevant chunks are retrieved from the knowledge base using two methods:
+#     * **Dense Retrieval**: Based on vector similarity (e.g., cosine similarity).
+#     * **Sparse Retrieval**: Based on keyword matching using an algorithm like BM25.
+# 4.  **Combine Results**: The results from both dense and sparse retrieval are combined, either by taking the union of the two sets or by using a weighted score fusion to rank the combined results.
+# 
+# ---
+# 
+# ### **Advanced RAG Technique (Select One)**
+# 
+# Based on your group number, you will implement one of the following advanced Retrieval-Augmented Generation (RAG) techniques:
+# 
+# | Remainder (Group Number mod 5) | Advanced Technique                | Description                                                                     | **Hybrid Search** | Combine BM25 keyword search with dense vector retrieval for a balance of recall and precision. |
+# |                                
+# ---
+# 
+# ### **Response Generation**
+# 
+# To generate the final answer, follow these steps:
+# 1.  **Use a small, open-source generative model** (e.g., DistilGPT2, GPT-2 Small, or Llama-2 7B if available).
+# 2.  **Concatenate the retrieved passages and the user query** to form the input prompt for the model.
+# 3.  **Limit the total input tokens** to ensure the prompt fits within the model's context window.
+# 
+# ---
+# 
+# ### **Guardrail Implementation**
+# 
+# Implement one of the following guardrails to improve the reliability and safety of your system:
+# 
+# * **Input-side Guardrail**: Validate user queries to filter out irrelevant, inappropriate, or harmful inputs before they are processed.
+# * **Output-side Guardrail**: Check the generated response to filter or flag any hallucinated (non-factual) or undesirable outputs before they are shown to the user.
+
+# ## 8. RAG  Retrieval
+
+# In[ ]:
+
+
+import logging
+import numpy as np
+import streamlit as st
+import os
+import sys
+import re  # Ensure re is imported at the top
+import time
+from typing import List, Dict, Tuple
+
+from sentence_transformers import SentenceTransformer
+from transformers import pipeline, AutoTokenizer
+import json
+import pickle
+import faiss
+from rank_bm25 import BM25Okapi
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+import nltk
+
+# NEW: Imports and setup for Google Drive in Colab
+
+# Set the base directory in Google Drive (adjust if your project folder is different, e.g., '/content/drive/MyDrive/your_project_folder/')
+#base_dir = '/content/drive/MyDrive/'
+#os.chdir(base_dir)  # Change working directory to Google Drive base to handle relative paths
+
+#sys.path.append(os.path.join(base_dir, os.path.dirname(os.path.dirname(os.path.abspath('__file__')))))  # Adjusted for potential __file__ issues; may need tweaking based on structure
+
+
+
+# =============================
+# Initial Setup
+# =============================
+nltk.download('punkt', quiet=True)
+nltk.download('stopwords', quiet=True)
+nltk.download('averaged_perceptron_tagger', quiet=True)
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logger = logging.getLogger(__name__)
+
 class RetrievalConfig:
     INITIAL_CANDIDATE_COUNT = 80
     BM25_TOP_MULTIPLIER = 2
@@ -422,38 +985,7 @@ class RetrievalConfig:
 # =============================
 # Utilities
 # =============================
-def load_chunks(file_path: str = "data/chunks/all_sentence_chunks.json") -> List[Dict]:
 
-    try:
-        with open(file_path, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except FileNotFoundError:
-        
-        return []
-    except Exception as e:
-        
-        return []
-
-def load_faiss_index(index_path: str = "data/retrieval/faiss_index.bin") -> Tuple[faiss.Index, List[int]]:
-    
-    try:
-        index = faiss.read_index(index_path)
-        id_path = index_path.replace(".bin", "_ids.pkl")
-        with open(id_path, 'rb') as f:
-            chunk_ids = pickle.load(f)
-        
-        return index, chunk_ids
-    except Exception as e:
-        
-        return None, None
-
-def load_bm25_index(index_path: str = "data/retrieval/bm25_index.pkl") -> BM25Okapi:
-    
-    try:
-        with open(index_path, 'rb') as f:
-            return pickle.load(f)
-    except Exception as e:
-        return None
 def preprocess_query(query: str) -> Tuple[str, List[str]]:
     stop_words = set(stopwords.words('english'))
     tokens = word_tokenize(query.lower())
@@ -473,12 +1005,18 @@ def _faiss_scores_to_similarity(distances: np.ndarray) -> np.ndarray:
     if RetrievalConfig.FAISS_INDEX_IS_INNER_PRODUCT:
         return distances
     return -distances
+
+# =============================
+# Hybrid Retrieval (Deduplicated)
+# =============================
+
 def hybrid_retrieval(query: str,
                      chunks: List[Dict],
                      faiss_index: faiss.Index,
                      bm25: BM25Okapi,
                      chunk_ids: List[int],
                      emb_model: SentenceTransformer) -> List[Dict]:
+    logger.info(f"Hybrid retrieval for query: {query}")
 
     processed_query, query_tokens = preprocess_query(query)
     q_emb = emb_model.encode([f"query: {processed_query}"], show_progress_bar=False, normalize_embeddings=True)[0]
@@ -501,46 +1039,89 @@ def hybrid_retrieval(query: str,
     top_ids = sorted(combined, key=combined.get, reverse=True)
     seen_texts = set()
     candidate_chunks = []
-    print(f"top_ids{top_ids}")
     for cid in top_ids:
         chunk = next((c for c in chunks if c["id"] == cid), None)
-        print(f"chunk{chunk}")
         if chunk and chunk["text"].strip() not in seen_texts:
             seen_texts.add(chunk["text"].strip())
             candidate_chunks.append(chunk)
         if len(candidate_chunks) >= RetrievalConfig.FINAL_TOP_K:
             break
-    print(f"candidate_chunks{candidate_chunks}")
-    return candidate_chunks
-# Initialize models and FAISS index
-@st.cache_resource
-def initialize_rag():
-    # Load retriever model
-    retriever_model = SentenceTransformer('all-MiniLM-L6-v2')
-    
-    # Generate document embeddings
-    doc_embeddings = retriever_model.encode(documents, convert_to_tensor=True).cpu().numpy()
-    
-    # Create FAISS index
-    dimension = doc_embeddings.shape[1]
-    index = faiss.IndexFlatL2(dimension)
-    index.add(doc_embeddings)
-    
-    # Load generator model
-    generator = pipeline('text2text-generation', model='t5-small')
-    
-    return retriever_model, index, generator
-def rag_generate(query: str, retrieved_chunks: List[Dict], cfg: RetrievalConfig) -> str:
 
+    logger.info(f"Retrieved {len(candidate_chunks)} unique chunks for generation.")
+    for i, chunk in enumerate(candidate_chunks, 1):
+        logger.info(f"Chunk {i}: {chunk['text'][:200]}... (Source: {chunk['metadata'].get('file_path', 'unknown')})")
+    return candidate_chunks
+
+# =============================
+# RAG Generation
+# =============================
+
+def rag_generate(query: str, retrieved_chunks: List[Dict], cfg: RetrievalConfig) -> str:
+    logger.info("Generating answer from merged chunks...")
     if not retrieved_chunks:
         return "No relevant information was found to generate an answer."
 
-
+    # Updated regex to match full financial numbers
+    number_pattern = re.compile(
+        r"\$?(?:\d{1,3}(?:,\d{3})*|\d+)(?:\.\d+)?(?:\s*(?:million|billion|mn|bn|m|b))\b",
+        re.IGNORECASE
+    )
+    year_pattern = re.compile(r"\b(19|20)\d{2}\b")
     keyword_variants = [
         "total assets", "total asset", "assets total", "total liabilities",
         "total equity", "cash and cash equivalents", "revenues", "net profit",
         "income tax expense"
     ]
+
+    def find_number_near_keyword(chunks, keywords, window_chars=200):
+        # Prioritize chunks containing the query's main keyword
+        query_keywords = [kw for kw in keywords if kw in query.lower()]
+        for chunk in chunks:
+            txt = chunk.get("text", "").lower()
+            src = chunk.get("metadata", {}).get("file_path", "unknown")
+            # Log chunk metadata for debugging
+            logger.debug(f"Processing chunk: {txt[:200]}... (Source: {src})")
+            # Check for query-specific keywords first
+            for kw in query_keywords:
+                idx = txt.find(kw)
+                if idx != -1:
+                    start = max(0, idx - 50)
+                    end = min(len(txt), idx + window_chars)
+                    window = txt[start:end]
+                    matches = number_pattern.finditer(window)
+                    for m in matches:
+                        val = m.group(0).strip()
+                        # Log all matches for debugging
+                        logger.debug(f"Found potential number: {val} in window: {window[:100]}...")
+                        # Check if the number is part of a year
+                        if not year_pattern.search(txt[max(0, m.start() - 10):m.end() + 10]):
+                            # Verify metadata consistency
+                            if "2023" in query.lower() and "2023" in txt and "2024" in src:
+                                logger.warning(f"Metadata mismatch: 2023 data in {src}")
+                            logger.info(f"Extracted number: {val} from chunk: {txt[:200]}...")
+                            return val, chunk
+        # Fallback to any chunk with any keyword
+        for chunk in chunks:
+            txt = chunk.get("text", "").lower()
+            src = chunk.get("metadata", {}).get("file_path", "unknown")
+            logger.debug(f"Processing chunk: {txt[:200]}... (Source: {src})")
+            for kw in keywords:
+                idx = txt.find(kw)
+                if idx != -1:
+                    start = max(0, idx - 50)
+                    end = min(len(txt), idx + window_chars)
+                    window = txt[start:end]
+                    matches = number_pattern.finditer(window)
+                    for m in matches:
+                        val = m.group(0).strip()
+                        logger.debug(f"Found potential number: {val} in window: {window[:100]}...")
+                        if not year_pattern.search(txt[max(0, m.start() - 10):m.end() + 10]):
+                            if "2023" in query.lower() and "2023" in txt and "2024" in src:
+                                logger.warning(f"Metadata mismatch: 2023 data in {src}")
+                            logger.info(f"Extracted number: {val} from chunk: {txt[:200]}...")
+                            return val, chunk
+        return None, None
+
     tokenizer = AutoTokenizer.from_pretrained(cfg.GEN_MODEL_NAME)
     context_parts = []
     token_budget = cfg.CTX_MAX_TOKENS
@@ -554,7 +1135,14 @@ def rag_generate(query: str, retrieved_chunks: List[Dict], cfg: RetrievalConfig)
             break
     context = "\n\n".join(context_parts)
 
-    
+    numeric_query = bool(re.search(r"\b(19|20)\d{2}\b", query)) or any(w in query.lower() for w in ["assets", "revenue", "profit", "income", "liabilities", "cash"])
+    if numeric_query:
+        match_text, match_chunk = find_number_near_keyword(retrieved_chunks, keyword_variants)
+        if match_text:
+            src = match_chunk.get("metadata", {}).get("file_path", "unknown")
+            logger.info(f"Numeric extraction success: '{match_text}' from {src}")
+            return match_text
+
     prompt = (
         "You are a precise financial assistant. Answer ONLY using the exact words or numbers from the context.\n"
         "If the exact answer is not present, reply 'Not found'. Do not invent numbers.\n\n"
@@ -576,32 +1164,19 @@ def rag_generate(query: str, retrieved_chunks: List[Dict], cfg: RetrievalConfig)
             eos_token_id=tokenizer.eos_token_id
         )[0]['generated_text']
         answer = response.replace(truncated_prompt, "").strip().split('\n')[0].strip()
-        
+        logger.info(f"Generated answer: {answer}")
         return answer
     except ValueError as ve:
-        
+        logger.error(f"Model loading error: {ve}")
         return "Failed to load the generative model."
     except RuntimeError as excp:
-        
+        logger.error(f"Generation error: {excp}")
         return "An error occurred during answer generation."
-# RAG pipeline function
-def rag_pipeline(query, retriever_model, index, documents, generator, k=3):
-    # Embed query
-    query_embedding = retriever_model.encode([query], convert_to_tensor=True).cpu().numpy()
-    
-    # Retrieve top-k documents
-    distances, indices = index.search(query_embedding, k)
-    retrieved_docs = [documents[idx] for idx in indices[0]]
-    
-    # Create prompt with context
-    context = " ".join(retrieved_docs)
-    prompt = f"Question: {query} Context: {context}"
-    
-    # Generate response
-    response = generator(prompt, max_length=50, num_return_sequences=1)
-    return retrieved_docs, response[0]['generated_text']
 
-# Streamlit app
+# =============================
+# Streamlit App
+# =============================
+
 def main():
     st.set_page_config(layout="wide")
     st.title("Infosys Financial RAG System 📈 (Hybrid Retrieval Only)")
@@ -631,7 +1206,7 @@ def main():
         st.error("Failed to load all resources.")
         return
 
-    query = st.text_input("Your Query:", "What was the revenues in 2024?")
+    query = st.text_input("Enter your financial query:", "What were the total assets in 2023?")
 
     if st.button("Submit Query"):
         if not query.strip():
