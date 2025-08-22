@@ -3,7 +3,23 @@ from sentence_transformers import SentenceTransformer
 import faiss
 import numpy as np
 from transformers import pipeline
+import numpy as np
+import streamlit as st
+import os
+import sys
+import re  # Ensure re is imported at the top
+import time
+from typing import List, Dict, Tuple
 
+from sentence_transformers import SentenceTransformer
+from transformers import pipeline, AutoTokenizer
+import json
+import pickle
+import faiss
+from rank_bm25 import BM25Okapi
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+import nltk
 # Sample knowledge base
 documents = [
     "Consolidated Balance Sheet as of March 31, (Dollars in millions except equity share data) Note ASSETS Current assets Cash and cash equivalents 1,481 2,305 Current investments Trade receivables 3,094 2,995 Unbilled revenues 1,861 1,526 Prepayments and other current assets 1,336 1,133 Income tax assets Derivative financial instruments Total current assets 8,626 8,865 Non-current assets Property, plant and equipment 1,679 1,793 Right-of-use assets Goodwill Intangible assets Non-current investments 1,530 1,801 Unbilled revenues Deferred income tax assets Income tax assets Other non-current assets Total non-current assets 6,686 6,690 Total assets 15,312 15,555 LIABILITIES AND EQUITY Current liabilities Trade payables Lease liabilities Derivative financial instruments Current income tax liabilities Unearned revenues Employee benefit obligations Provisions Other current liabilities 2,403 2,170 Total current liabilities 4,769 4,433 Non-current liabilities Lease liabilities Deferred income tax liabilities Employee benefit obligations Other non-current liabilities Total liabilities 6,088 5,561 Equity Share capital – ₹5/- ($0.16) par value 4,800,000,000 (4,800,000,000) authorized equity shares, issued and outstanding 4,136,387,925 (4,193,012,929) equity shares fully paid up, net of 12,172,119 (13,725,712) treasury shares each as of March 31, 2023 (March 31, 2022), respectively Share premium Retained earnings 11,401 11,672 Cash flow hedge reserve – Other reserves 1,370 1,170 Capital redemption reserve Other components of equity (4,314) (3,588) Total equity attributable to equity holders of the company 9,172 9,941 Non-controlling interests Total equity 9,224 9,994 Total liabilities and equity 15,312",
@@ -11,7 +27,107 @@ documents = [
     "Consolidated Balance Sheet as of March 31, (Dollars in millions except equity share data) Note ASSETS Current assets Cash and cash equivalents 1,773 1,481 Current investments 1,548 Trade receivables 3,620 3,094 Unbilled revenues 1,531 1,861 Prepayments and other current assets 1,473 1,336 Income tax assets Derivative financial instruments Total current assets 10,722 8,626 Non-current assets Property, plant and equipment 1,537 1,679 Right-of-use assets Goodwill Intangible assets Non-current investments 1,404 1,530 Unbilled revenues Deferred income tax assets Income tax assets Other non-current assets Total non-current assets 5,801 6,686 Total assets 16,523 15,312 LIABILITIES AND EQUITY Current liabilities Trade payables Lease liabilities Derivative financial instruments Current income tax liabilities Unearned revenues Employee benefit obligations Provisions Other current liabilities 2,099 2,403 Total current liabilities 4,651 4,769 Non-current liabilities Lease liabilities Deferred income tax liabilities Employee benefit obligations Other non-current liabilities Total liabilities 5,918 6,088 Equity Share capital – ₹5/- ($0.16) par value 4,800,000,000 (4,800,000,000) authorized equity shares, issued and outstanding 4,139,950,635 (4,136,387,925) equity shares fully paid up, net of 10,916,829 (12,172,119) treasury shares each as of March 31, 2024 (March 31, 2023), respectively Share premium Retained earnings 12,557 11,401 Cash flow hedge reserve – Other reserves 1,623 1,370 Capital redemption reserve Other components of equity (4,396) (4,314) Total equity attributable to equity holders of the company 10,559 9,172 Non-controlling interests Total equity 10,605 9,224 Total liabilities and equity 16,523.",
     "TConsolidated Statements of Comprehensive Income for the years ended March 31, (Dollars in millions except equity share and per equity share data) Note Revenues 18,562 18,212 16,311 Cost of sales 12,975 12,709 10,996 Gross profit 5,587 5,503 5,315 Operating expenses: Selling and marketing expenses Administrative expenses Total operating expenses 1,753 1,678 1,560 Operating profit 3,834 3,825 3,755 Other income, net Finance cost Profit before income taxes 4,346 4,125 4,036 Income tax expense 1,177 1,142 1,068 Net profit 3,169 2,983 2,968 Other comprehensive income Items that will not be reclassified subsequently to profit or loss: Remeasurements of the net defined benefit liability / asset, net (11) Equity instruments through other comprehensive income, net and (3) Items that will be reclassified subsequently to profit or loss: Fair valuation of investments, net and (30) (6) Fair value changes on derivatives designated as cash flow hedge, net and (1) (1) Exchange differences on translation of foreign operations (117) (697) (320) (99) (728) (327) Total other comprehensive income/(loss), net of tax (82) (727) (326) Total comprehensive income 3,087 2,256 2,642 Profit attributable to: Owners of the company 3,167 2,981 2,963 Non-controlling interests 3,169 2,983 2,968 Total comprehensive income attributable to: Owners of the company 3,086 2,254 2,637 Non-controlling interests 3,087 2,256 2,642 Earnings per equity share Basic (in $ per share) 0.71 Diluted (in $ per share) 0.71."
 ]
+class RetrievalConfig:
+    INITIAL_CANDIDATE_COUNT = 80
+    BM25_TOP_MULTIPLIER = 2
+    DENSE_WEIGHT = 0.5
+    SPARSE_WEIGHT = 0.5
+    FINAL_TOP_K = 8
+    CTX_MAX_TOKENS = 900
+    EMB_MODEL_NAME = "intfloat/e5-small-v2"
+    GEN_MODEL_NAME = "distilgpt2"
+    FAISS_INDEX_IS_INNER_PRODUCT = True
 
+# =============================
+# Utilities
+# =============================
+def load_chunks(file_path: str = "data/chunks/all_sentence_chunks.json") -> List[Dict]:
+
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        
+        return []
+    except Exception as e:
+        
+        return []
+
+def load_faiss_index(index_path: str = "data/retrieval/faiss_index.bin") -> Tuple[faiss.Index, List[int]]:
+    
+    try:
+        index = faiss.read_index(index_path)
+        id_path = index_path.replace(".bin", "_ids.pkl")
+        with open(id_path, 'rb') as f:
+            chunk_ids = pickle.load(f)
+        
+        return index, chunk_ids
+    except Exception as e:
+        
+        return None, None
+
+def load_bm25_index(index_path: str = "data/retrieval/bm25_index.pkl") -> BM25Okapi:
+    
+    try:
+        with open(index_path, 'rb') as f:
+            return pickle.load(f)
+    except Exception as e:
+        return None
+def preprocess_query(query: str) -> Tuple[str, List[str]]:
+    stop_words = set(stopwords.words('english'))
+    tokens = word_tokenize(query.lower())
+    filtered_tokens = [word for word in tokens if word.isalnum() and word not in stop_words]
+    return " ".join(filtered_tokens), filtered_tokens
+
+def _normalize_minmax(d: Dict[int, float]) -> Dict[int, float]:
+    if not d:
+        return d
+    vals = list(d.values())
+    vmin, vmax = min(vals), max(vals)
+    if vmax - vmin < 1e-9:
+        return {k: 1.0 for k in d}
+    return {k: (v - vmin) / (vmax - vmin) for k, v in d.items()}
+
+def _faiss_scores_to_similarity(distances: np.ndarray) -> np.ndarray:
+    if RetrievalConfig.FAISS_INDEX_IS_INNER_PRODUCT:
+        return distances
+    return -distances
+def hybrid_retrieval(query: str,
+                     chunks: List[Dict],
+                     faiss_index: faiss.Index,
+                     bm25: BM25Okapi,
+                     chunk_ids: List[int],
+                     emb_model: SentenceTransformer) -> List[Dict]:
+
+    processed_query, query_tokens = preprocess_query(query)
+    q_emb = emb_model.encode([f"query: {processed_query}"], show_progress_bar=False, normalize_embeddings=True)[0]
+
+    distances, indices = faiss_index.search(q_emb.reshape(1, -1), RetrievalConfig.INITIAL_CANDIDATE_COUNT)
+    sim = _faiss_scores_to_similarity(distances)[0]
+    dense_scores = {chunk_ids[i]: float(sim[j]) for j, i in enumerate(indices[0]) if i != -1}
+
+    bm25_scores = bm25.get_scores(query_tokens)
+    top_bm25_idx = np.argsort(bm25_scores)[::-1][:RetrievalConfig.INITIAL_CANDIDATE_COUNT * RetrievalConfig.BM25_TOP_MULTIPLIER]
+    sparse_scores = {chunk_ids[i]: float(bm25_scores[i]) for i in top_bm25_idx}
+
+    dn = _normalize_minmax(dense_scores)
+    sn = _normalize_minmax(sparse_scores)
+
+    combined = {cid: RetrievalConfig.DENSE_WEIGHT * dn.get(cid, 0.0) +
+                        RetrievalConfig.SPARSE_WEIGHT * sn.get(cid, 0.0)
+                for cid in set(dn) | set(sn)}
+
+    top_ids = sorted(combined, key=combined.get, reverse=True)
+    seen_texts = set()
+    candidate_chunks = []
+    for cid in top_ids:
+        chunk = next((c for c in chunks if c["id"] == cid), None)
+        if chunk and chunk["text"].strip() not in seen_texts:
+            seen_texts.add(chunk["text"].strip())
+            candidate_chunks.append(chunk)
+        if len(candidate_chunks) >= RetrievalConfig.FINAL_TOP_K:
+            break
+    return candidate_chunks
 # Initialize models and FAISS index
 @st.cache_resource
 def initialize_rag():
@@ -30,7 +146,60 @@ def initialize_rag():
     generator = pipeline('text2text-generation', model='t5-small')
     
     return retriever_model, index, generator
+def rag_generate(query: str, retrieved_chunks: List[Dict], cfg: RetrievalConfig) -> str:
 
+    if not retrieved_chunks:
+        return "No relevant information was found to generate an answer."
+
+
+    keyword_variants = [
+        "total assets", "total asset", "assets total", "total liabilities",
+        "total equity", "cash and cash equivalents", "revenues", "net profit",
+        "income tax expense"
+    ]
+    tokenizer = AutoTokenizer.from_pretrained(cfg.GEN_MODEL_NAME)
+    context_parts = []
+    token_budget = cfg.CTX_MAX_TOKENS
+    for ch in retrieved_chunks:
+        t = ch.get("text", "").strip()
+        tokens = tokenizer(t, return_tensors='pt')['input_ids'].shape[1]
+        if tokens <= token_budget:
+            context_parts.append(t)
+            token_budget -= tokens
+        if token_budget <= 0:
+            break
+    context = "\n\n".join(context_parts)
+
+    
+    prompt = (
+        "You are a precise financial assistant. Answer ONLY using the exact words or numbers from the context.\n"
+        "If the exact answer is not present, reply 'Not found'. Do not invent numbers.\n\n"
+        f"Context:\n{context}\n\n"
+        f"Question: {query}\nAnswer:"
+    )
+
+    inputs = tokenizer(prompt, return_tensors='pt', truncation=True, max_length=1024)
+    truncated_prompt = tokenizer.decode(inputs['input_ids'][0], skip_special_tokens=True)
+
+    try:
+        generator = pipeline('text-generation', model=cfg.GEN_MODEL_NAME, device=-1)
+        response = generator(
+            truncated_prompt,
+            max_new_tokens=120,
+            do_sample=False,
+            num_return_sequences=1,
+            pad_token_id=tokenizer.eos_token_id,
+            eos_token_id=tokenizer.eos_token_id
+        )[0]['generated_text']
+        answer = response.replace(truncated_prompt, "").strip().split('\n')[0].strip()
+        
+        return answer
+    except ValueError as ve:
+        
+        return "Failed to load the generative model."
+    except RuntimeError as excp:
+        
+        return "An error occurred during answer generation."
 # RAG pipeline function
 def rag_pipeline(query, retriever_model, index, documents, generator, k=3):
     # Embed query
@@ -49,33 +218,65 @@ def rag_pipeline(query, retriever_model, index, documents, generator, k=3):
     return retrieved_docs, response[0]['generated_text']
 
 # Streamlit app
-st.title("RAG System with Streamlit")
-st.write("Enter a query to retrieve relevant documents and generate an answer.")
+def main():
+    st.set_page_config(layout="wide")
+    st.title("Infosys Financial RAG System 📈 (Hybrid Retrieval Only)")
+    st.write("Ask questions about Infosys's financial statements. Hybrid retrieval = BM25 + Dense.")
 
-# Initialize models
-retriever_model, index, generator = initialize_rag()
+    @st.cache_resource(show_spinner=False)
+    def load_resources():
+        try:
+            emb_model = SentenceTransformer(RetrievalConfig.EMB_MODEL_NAME)
+            chunks = load_chunks()
+            faiss_index, chunk_ids = load_faiss_index()
+            bm25 = load_bm25_index()
+            if faiss_index is None or bm25 is None or not chunks:
+                return None, None, None, None, None
+            return emb_model, chunks, faiss_index, chunk_ids, bm25
+        except Exception as e:
+            st.error(f"Resource loading error: {e}")
+            return None, None, None, None, None
 
-# Input query
-query = st.text_input("Your Query:", "What was the revenues in 2024?")
+    resources = load_resources()
+    if not resources or len(resources) < 5:
+        st.error("Failed to load one or more critical resources.")
+        return
 
-# Button to trigger RAG
-if st.button("Get Answer"):
-    if query:
-        with st.spinner("Retrieving and generating answer..."):
-            # Run RAG pipeline
-            retrieved_docs, answer = rag_pipeline(query, retriever_model, index, documents, generator)
-            
-            # Display results
-            st.subheader("Retrieved Documents:")
-            for i, doc in enumerate(retrieved_docs, 1):
-                st.write(f"{i}. {doc}")
-            
-            st.subheader("Generated Answer:")
-            st.write(answer)
-    else:
-        st.warning("Please enter a query.")
+    emb_model, chunks, faiss_index, chunk_ids, bm25 = resources
+    if not all([emb_model, chunks, faiss_index, chunk_ids, bm25]):
+        st.error("Failed to load all resources.")
+        return
 
-# Run instructions
-st.markdown("---")
-st.markdown("**How to Run Locally:**")
-st.markdown("Save this script as `app.py` and run `streamlit run app.py` in your terminal.")
+    query = st.text_input("Your Query:", "What was the revenues in 2024?")
+
+    if st.button("Submit Query"):
+        if not query.strip():
+            st.warning("Please enter a query.")
+            return
+
+        start = time.time()
+        with st.spinner("Retrieving relevant documents..."):
+            results = hybrid_retrieval(query, chunks, faiss_index, bm25, chunk_ids, emb_model)
+
+        if not results:
+            st.error("No relevant information found.")
+            return
+
+        with st.spinner("Generating answer..."):
+            answer = rag_generate(query, results, RetrievalConfig)
+
+        elapsed = time.time() - start
+
+        st.subheader("Answer")
+        st.markdown(f"**{answer}**")
+
+        with st.expander("Show Retrieval Details"):
+            st.write(f"**Response Time**: {elapsed:.2f} sec")
+            st.write(f"**Merged Context Blocks**: {len(results)}")
+            for i, ch in enumerate(results, 1):
+                src = ch['metadata'].get('file_path', 'unknown')
+                st.info(f"**[{i}] Source**: {src}\n\n**Text**: {ch['text'][:1200]}{'...' if len(ch['text'])>1200 else ''}")
+
+if __name__ == "__main__":
+    main()
+
