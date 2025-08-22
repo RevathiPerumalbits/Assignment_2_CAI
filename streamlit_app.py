@@ -403,7 +403,7 @@ def main_chunker():
     with open("data/chunks/all_sentence_chunks.json", 'w', encoding='utf-8') as f:
         json.dump(all_chunks, f, indent=4)
 
-    logger.info(f"✅ Successfully saved all {len(all_chunks)} chunks to {"data/chunks/all_sentence_chunks.json"}")
+    logger.info(f"✅ Successfully saved all {len(all_chunks)} chunks to {'data/chunks/all_sentence_chunks.json'}")
 
 if __name__ == "__main__":
     main_chunker()
