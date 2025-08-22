@@ -660,17 +660,17 @@ def main_chunker():
     #drive_base_path = "/content/drive/My Drive/"
     drive_base_path = "data/raw"
     # --- MODIFIED: Create full input file paths for Google Drive ---
-    segmented_dir = os.path.join(drive_base_path, "data/segmented")
+   
     input_files = [
-        os.path.join(segmented_dir, "infosys_2023_balance_sheet.txt"),
-        os.path.join(segmented_dir, "infosys_2024_balance_sheet.txt"),
-        os.path.join(segmented_dir, "infosys_2023_income_statement.txt"),
-        os.path.join(segmented_dir, "infosys_2024_income_statement.txt")
+        os.path.join( "infosys_2023_balance_sheet.txt"),
+        os.path.join( "infosys_2024_balance_sheet.txt"),
+        os.path.join( "infosys_2023_income_statement.txt"),
+        os.path.join( "infosys_2024_income_statement.txt")
     ]
 
     # --- MODIFIED: Define the output folder in Google Drive ---
-    output_folder = os.path.join(drive_base_path, "data/chunks")
-    os.makedirs(output_folder, exist_ok=True)
+    output_folder = os.path.join( "data/chunks")
+    os.makedirs("data/chunks", exist_ok=True)
 
     all_chunks = []
     for file_path in input_files:
