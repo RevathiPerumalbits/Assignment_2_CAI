@@ -435,23 +435,23 @@ def main_validator():
     # The relative paths are now joined with your Drive's base path.
     validation_config = [
         {
-            "file": os.path.join( "data/segmented/infosys_2023_balance_sheet.txt"),
+            "file": "data/segmented/infosys_2023_balance_sheet.txt",
             "header": "Consolidated Balance Sheet",
             "expected_values": {"Total assets": "15,312", "Total equity": "9,224"}
         },
         {
-            "file": os.path.join( "data/segmented/infosys_2023_income_statement.txt"),
+            "file": "data/segmented/infosys_2023_income_statement.txt",
             "header": "Consolidated Statements of Comprehensive Income",
             "expected_values": {"Revenues": "18,212", "Net profit": "2,983"}
         },
         # You can add configurations for 2024 as well
         {
-            "file": os.path.join( "data/segmented/infosys_2024_balance_sheet.txt"),
+            "file":  "data/segmented/infosys_2024_balance_sheet.txt",
             "header": "Consolidated Balance Sheet",
             "expected_values": {"Total assets": "16,523", "Total equity": "10,605"}
         },
         {
-            "file": os.path.join( "data/segmented/infosys_2024_income_statement.txt"),
+            "file":  "data/segmented/infosys_2024_income_statement.txt",
             "header": "Consolidated Statements of Comprehensive Income",
             "expected_values": {"Revenues": "18,562", "Net profit": "3,169"}
         }
