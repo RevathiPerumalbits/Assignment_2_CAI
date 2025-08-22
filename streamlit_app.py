@@ -1087,12 +1087,6 @@ def rag_generate(query: str, retrieved_chunks: List[Dict], cfg: RetrievalConfig)
     context = "\n\n".join(context_parts)
 
     numeric_query = bool(re.search(r"\b(19|20)\d{2}\b", query)) or any(w in query.lower() for w in ["assets", "revenue", "profit", "income", "liabilities", "cash"])
-    if numeric_query:
-        match_text, match_chunk = find_number_near_keyword(retrieved_chunks, keyword_variants)
-        if match_text:
-            src = match_chunk.get("metadata", {}).get("file_path", "unknown")
-            logger.info(f"Numeric extraction success: '{match_text}' from {src}")
-            return match_text
 
     prompt = (
         "You are a precise financial assistant. Answer ONLY using the exact words or numbers from the context.\n"
