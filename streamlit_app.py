@@ -1073,55 +1073,6 @@ def rag_generate(query: str, retrieved_chunks: List[Dict], cfg: RetrievalConfig)
         "income tax expense"
     ]
 
-    def find_number_near_keyword(chunks, keywords, window_chars=200):
-        # Prioritize chunks containing the query's main keyword
-        query_keywords = [kw for kw in keywords if kw in query.lower()]
-        for chunk in chunks:
-            txt = chunk.get("text", "").lower()
-            src = chunk.get("metadata", {}).get("file_path", "unknown")
-            # Log chunk metadata for debugging
-            logger.debug(f"Processing chunk: {txt[:200]}... (Source: {src})")
-            # Check for query-specific keywords first
-            for kw in query_keywords:
-                idx = txt.find(kw)
-                if idx != -1:
-                    start = max(0, idx - 50)
-                    end = min(len(txt), idx + window_chars)
-                    window = txt[start:end]
-                    matches = number_pattern.finditer(window)
-                    for m in matches:
-                        val = m.group(0).strip()
-                        # Log all matches for debugging
-                        logger.debug(f"Found potential number: {val} in window: {window[:100]}...")
-                        # Check if the number is part of a year
-                        if not year_pattern.search(txt[max(0, m.start() - 10):m.end() + 10]):
-                            # Verify metadata consistency
-                            if "2023" in query.lower() and "2023" in txt and "2024" in src:
-                                logger.warning(f"Metadata mismatch: 2023 data in {src}")
-                            logger.info(f"Extracted number: {val} from chunk: {txt[:200]}...")
-                            return val, chunk
-        # Fallback to any chunk with any keyword
-        for chunk in chunks:
-            txt = chunk.get("text", "").lower()
-            src = chunk.get("metadata", {}).get("file_path", "unknown")
-            logger.debug(f"Processing chunk: {txt[:200]}... (Source: {src})")
-            for kw in keywords:
-                idx = txt.find(kw)
-                if idx != -1:
-                    start = max(0, idx - 50)
-                    end = min(len(txt), idx + window_chars)
-                    window = txt[start:end]
-                    matches = number_pattern.finditer(window)
-                    for m in matches:
-                        val = m.group(0).strip()
-                        logger.debug(f"Found potential number: {val} in window: {window[:100]}...")
-                        if not year_pattern.search(txt[max(0, m.start() - 10):m.end() + 10]):
-                            if "2023" in query.lower() and "2023" in txt and "2024" in src:
-                                logger.warning(f"Metadata mismatch: 2023 data in {src}")
-                            logger.info(f"Extracted number: {val} from chunk: {txt[:200]}...")
-                            return val, chunk
-        return None, None
-
     tokenizer = AutoTokenizer.from_pretrained(cfg.GEN_MODEL_NAME)
     context_parts = []
     token_budget = cfg.CTX_MAX_TOKENS
