@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
-
+#finanna
 # # Financial Document Analysis and Q&A Pipeline
 # 
 # This Jupyter Notebook consolidates a series of Python scripts into a cohesive pipeline for extracting, cleaning, segmenting, and analyzing financial data from PDF documents. The ultimate goal is to create a retrieval system capable of answering questions based on the document's content.
